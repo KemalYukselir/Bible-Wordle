@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
-// Expanded Bible verses data
+// Expanded Bible verses data with Location
 const sampleVerses = [
   {
     id: 1,
@@ -17,6 +17,8 @@ const sampleVerses = [
     book: "Matthew",
     speaker: "Jesus",
     randomWord: "light",
+    location: "Galilee",
+    chapterRange: "1-10", // Sermon on the Mount
   },
   {
     id: 2,
@@ -26,6 +28,8 @@ const sampleVerses = [
     book: "John",
     speaker: "Jesus",
     randomWord: "loved",
+    location: "Jerusalem",
+    chapterRange: "1-5", // Nicodemus encounter
   },
   {
     id: 3,
@@ -35,6 +39,8 @@ const sampleVerses = [
     book: "Philippians",
     speaker: "Paul",
     randomWord: "things",
+    location: "Prison",
+    chapterRange: "1-5", // Final chapter
   },
   {
     id: 4,
@@ -44,6 +50,8 @@ const sampleVerses = [
     book: "Psalms",
     speaker: "David",
     randomWord: "shepherd",
+    location: "Wilderness",
+    chapterRange: "21-30", // Single psalm
   },
   {
     id: 5,
@@ -53,6 +61,8 @@ const sampleVerses = [
     book: "Proverbs",
     speaker: "Solomon",
     randomWord: "trust",
+    location: "Jerusalem",
+    chapterRange: "1-5", // Wisdom chapter
   },
   {
     id: 6,
@@ -62,6 +72,8 @@ const sampleVerses = [
     book: "Joshua",
     speaker: "God",
     randomWord: "courageous",
+    location: "Jordan River",
+    chapterRange: "1-5", // Leadership transition
   },
   {
     id: 7,
@@ -71,6 +83,8 @@ const sampleVerses = [
     book: "Matthew",
     speaker: "Jesus",
     randomWord: "neighbor",
+    location: "Temple",
+    chapterRange: "1-10", // Temple teachings
   },
   {
     id: 8,
@@ -80,6 +94,8 @@ const sampleVerses = [
     book: "Psalms",
     speaker: "God",
     randomWord: "still",
+    location: "Zion",
+    chapterRange: "21-30", // Single psalm
   },
   {
     id: 9,
@@ -89,6 +105,8 @@ const sampleVerses = [
     book: "Isaiah",
     speaker: "God",
     randomWord: "fear",
+    location: "Babylon",
+    chapterRange: "36-45", // Comfort chapters
   },
   {
     id: 10,
@@ -98,6 +116,8 @@ const sampleVerses = [
     book: "Philippians",
     speaker: "Paul",
     randomWord: "rejoice",
+    location: "Prison",
+    chapterRange: "1-5", // Final chapter
   },
   {
     id: 11,
@@ -107,6 +127,8 @@ const sampleVerses = [
     book: "1 Peter",
     speaker: "Peter",
     randomWord: "anxiety",
+    location: "Rome",
+    chapterRange: "1-5", // Final chapter
   },
   {
     id: 12,
@@ -116,6 +138,8 @@ const sampleVerses = [
     book: "Matthew",
     speaker: "Jesus",
     randomWord: "kingdom",
+    location: "Galilee",
+    chapterRange: "1-10", // Sermon on the Mount
   },
   {
     id: 13,
@@ -125,6 +149,8 @@ const sampleVerses = [
     book: "Matthew",
     speaker: "Jesus",
     randomWord: "weary",
+    location: "Galilee",
+    chapterRange: "1-10", // Ministry teachings
   },
   {
     id: 14,
@@ -134,6 +160,8 @@ const sampleVerses = [
     book: "Nehemiah",
     speaker: "Nehemiah",
     randomWord: "joy",
+    location: "Jerusalem",
+    chapterRange: "6-10", // Law reading
   },
   {
     id: 15,
@@ -143,6 +171,8 @@ const sampleVerses = [
     book: "2 Corinthians",
     speaker: "Paul",
     randomWord: "faith",
+    location: "Corinth",
+    chapterRange: "1-5", // Ministry chapter
   },
   {
     id: 16,
@@ -152,6 +182,8 @@ const sampleVerses = [
     book: "Romans",
     speaker: "Paul",
     randomWord: "good",
+    location: "Rome",
+    chapterRange: "6-10", // Spirit chapter
   },
   {
     id: 17,
@@ -161,6 +193,8 @@ const sampleVerses = [
     book: "John",
     speaker: "Jesus",
     randomWord: "way",
+    location: "Upper Room",
+    chapterRange: "11-15", // Farewell discourse
   },
   {
     id: 18,
@@ -170,6 +204,8 @@ const sampleVerses = [
     book: "Romans",
     speaker: "Paul",
     randomWord: "transformed",
+    location: "Rome",
+    chapterRange: "6-10", // Living sacrifice
   },
   {
     id: 19,
@@ -179,6 +215,8 @@ const sampleVerses = [
     book: "Joshua",
     speaker: "God",
     randomWord: "wherever",
+    location: "Jordan River",
+    chapterRange: "1-5", // Leadership transition
   },
   {
     id: 20,
@@ -188,6 +226,8 @@ const sampleVerses = [
     book: "1 Corinthians",
     speaker: "Paul",
     randomWord: "patient",
+    location: "Corinth",
+    chapterRange: "11-15", // Love chapter
   },
 ]
 
@@ -196,6 +236,8 @@ const correctAnswer = {
   book: "Matthew",
   speaker: "Jesus",
   randomWord: "light",
+  location: "Galilee",
+  chapterRange: "1-10",
 }
 
 export default function GuessTheVerse() {
@@ -204,14 +246,19 @@ export default function GuessTheVerse() {
   const [guesses, setGuesses] = useState<
     Array<{
       verse: (typeof sampleVerses)[0]
-      feedback: { book: boolean; speaker: boolean; randomWord: boolean }
-      revealedCategories: { book: boolean; speaker: boolean; randomWord: boolean }
+      feedback: { book: boolean; speaker: boolean; randomWord: boolean; location: boolean; chapterRange: boolean }
+      revealedCategories: {
+        book: boolean
+        speaker: boolean
+        randomWord: boolean
+        location: boolean
+        chapterRange: boolean
+      }
     }>
   >([])
   const [gameOver, setGameOver] = useState(false)
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
-  const maxGuesses = 6 // Like Wordle
 
   const handleSubmit = () => {
     if (!selectedVerse || gameOver || isRevealing) return
@@ -220,12 +267,14 @@ export default function GuessTheVerse() {
       book: selectedVerse.book === correctAnswer.book,
       speaker: selectedVerse.speaker === correctAnswer.speaker,
       randomWord: selectedVerse.randomWord === correctAnswer.randomWord,
+      location: selectedVerse.location === correctAnswer.location,
+      chapterRange: selectedVerse.chapterRange === correctAnswer.chapterRange,
     }
 
     const newGuess = {
       verse: selectedVerse,
       feedback: newFeedback,
-      revealedCategories: { book: false, speaker: false, randomWord: false },
+      revealedCategories: { book: false, speaker: false, randomWord: false, location: false, chapterRange: false },
     }
 
     const updatedGuesses = [...guesses, newGuess]
@@ -263,19 +312,37 @@ export default function GuessTheVerse() {
             : guess,
         ),
       )
+    }, 900)
 
-      // Check if won (all categories correct)
+    setTimeout(() => {
+      setGuesses((prev) =>
+        prev.map((guess, index) =>
+          index === currentGuessIndex
+            ? { ...guess, revealedCategories: { ...guess.revealedCategories, location: true } }
+            : guess,
+        ),
+      )
+    }, 1200)
+
+    setTimeout(() => {
+      setGuesses((prev) =>
+        prev.map((guess, index) =>
+          index === currentGuessIndex
+            ? { ...guess, revealedCategories: { ...guess.revealedCategories, chapterRange: true } }
+            : guess,
+        ),
+      )
+
+      // Only end the game if they win - remove the else condition
       const won = Object.values(newFeedback).every(Boolean)
       if (won) {
         setHasWon(true)
         setGameOver(true)
-      } else if (updatedGuesses.length >= maxGuesses) {
-        // Game over - max guesses reached
-        setGameOver(true)
       }
+      // Remove the else block that was setting gameOver to true
 
       setIsRevealing(false)
-    }, 900)
+    }, 1500)
 
     // Reset selection for next guess
     setSelectedVerse(null)
@@ -293,7 +360,7 @@ export default function GuessTheVerse() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-gray-900">Guess the Verse</h1>
@@ -375,13 +442,6 @@ export default function GuessTheVerse() {
                 </Button>
               )}
             </div>
-
-            {/* Guess Counter */}
-            {guesses.length > 0 && (
-              <div className="text-center text-sm text-gray-600">
-                Guess {guesses.length} of {maxGuesses}
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -394,7 +454,7 @@ export default function GuessTheVerse() {
                 {gameOver
                   ? hasWon
                     ? "Congratulations! You found the correct verse!"
-                    : `Game over! The correct answer was: ${correctAnswer.book} - ${correctAnswer.speaker} - ${correctAnswer.randomWord}`
+                    : `Game over! The correct answer was: ${correctAnswer.book} - ${correctAnswer.speaker} - ${correctAnswer.randomWord} - ${correctAnswer.location} - ${correctAnswer.chapterRange}`
                   : "Keep guessing to find the correct verse"}
               </CardDescription>
             </CardHeader>
@@ -406,12 +466,12 @@ export default function GuessTheVerse() {
                       Guess {index + 1}: "{guess.verse.text}" - {guess.verse.reference}
                     </div>
 
-                    {/* Category Headers and Boxes */}
-                    <div className="grid grid-cols-3 gap-4">
+                    {/* Category Headers and Boxes - Now 5 columns */}
+                    <div className="grid grid-cols-5 gap-3">
                       <div className="text-center">
                         <h3 className="font-semibold text-gray-900 mb-3 text-sm">Book</h3>
                         <div
-                          className={`p-4 rounded-lg border-2 transition-all duration-500 transform ${
+                          className={`p-3 rounded-lg border-2 transition-all duration-500 transform ${
                             guess.revealedCategories.book
                               ? guess.feedback.book
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -419,7 +479,7 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-sm">
+                          <div className="font-bold text-xs">
                             {guess.revealedCategories.book ? guess.verse.book : "?"}
                           </div>
                         </div>
@@ -428,7 +488,7 @@ export default function GuessTheVerse() {
                       <div className="text-center">
                         <h3 className="font-semibold text-gray-900 mb-3 text-sm">Speaker</h3>
                         <div
-                          className={`p-4 rounded-lg border-2 transition-all duration-500 transform ${
+                          className={`p-3 rounded-lg border-2 transition-all duration-500 transform ${
                             guess.revealedCategories.speaker
                               ? guess.feedback.speaker
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -436,7 +496,7 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-sm">
+                          <div className="font-bold text-xs">
                             {guess.revealedCategories.speaker ? guess.verse.speaker : "?"}
                           </div>
                         </div>
@@ -445,7 +505,7 @@ export default function GuessTheVerse() {
                       <div className="text-center">
                         <h3 className="font-semibold text-gray-900 mb-3 text-sm">Key Word</h3>
                         <div
-                          className={`p-4 rounded-lg border-2 transition-all duration-500 transform ${
+                          className={`p-3 rounded-lg border-2 transition-all duration-500 transform ${
                             guess.revealedCategories.randomWord
                               ? guess.feedback.randomWord
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -453,8 +513,42 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-sm">
+                          <div className="font-bold text-xs">
                             {guess.revealedCategories.randomWord ? guess.verse.randomWord : "?"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-center">
+                        <h3 className="font-semibold text-gray-900 mb-3 text-sm">Location</h3>
+                        <div
+                          className={`p-3 rounded-lg border-2 transition-all duration-500 transform ${
+                            guess.revealedCategories.location
+                              ? guess.feedback.location
+                                ? "bg-green-500 border-green-600 text-white scale-105"
+                                : "bg-red-500 border-red-600 text-white scale-105"
+                              : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
+                          }`}
+                        >
+                          <div className="font-bold text-xs">
+                            {guess.revealedCategories.location ? guess.verse.location : "?"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-center">
+                        <h3 className="font-semibold text-gray-900 mb-3 text-sm">Chapter Range</h3>
+                        <div
+                          className={`p-3 rounded-lg border-2 transition-all duration-500 transform ${
+                            guess.revealedCategories.chapterRange
+                              ? guess.feedback.chapterRange
+                                ? "bg-green-500 border-green-600 text-white scale-105"
+                                : "bg-red-500 border-red-600 text-white scale-105"
+                              : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
+                          }`}
+                        >
+                          <div className="font-bold text-xs">
+                            {guess.revealedCategories.chapterRange ? guess.verse.chapterRange : "?"}
                           </div>
                         </div>
                       </div>
@@ -470,9 +564,7 @@ export default function GuessTheVerse() {
                     <div className="text-center">
                       <h3 className="font-semibold text-blue-900 mb-2">Final Result</h3>
                       <div className="text-2xl font-bold text-blue-800">
-                        {hasWon
-                          ? `Solved in ${guesses.length}/${maxGuesses} guesses!`
-                          : `${guesses.length}/${maxGuesses} guesses used`}
+                        {hasWon ? `Solved in ${guesses.length} guesses!` : `${guesses.length} guesses used`}
                       </div>
                     </div>
                   </div>
