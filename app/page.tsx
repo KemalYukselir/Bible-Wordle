@@ -1,11 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Book } from "lucide-react"
+import { ArrowRight, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import Image from "next/image"
 
 // Expanded Bible verses data with Location
@@ -238,7 +246,7 @@ const correctAnswer = {
   speaker: "Jesus",
   randomWord: "light",
   location: "Galilee",
-  chapterRange: "1-5",
+  chapterRange: "1-10",
 }
 
 export default function GuessTheVerse() {
@@ -376,116 +384,192 @@ export default function GuessTheVerse() {
           }}
         />
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-black/40"></div>
+      </div>
+
+      {/* README Button - Top Right */}
+      <div className="absolute top-4 right-4 z-20">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-gray-800/80 border-yellow-500/50 text-yellow-400 hover:bg-gray-700/80 hover:text-yellow-300"
+            >
+              <Info className="w-4 h-4 mr-2" />
+              README
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-gray-900/95 border-yellow-500/30 text-white max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-yellow-400 text-xl">Guess the Verse - Beta</DialogTitle>
+              <DialogDescription className="text-gray-300">
+                Welcome to the beta version of Guess the Verse!
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 text-sm">
+              <div>
+                <h3 className="text-yellow-400 font-semibold mb-2">How to Play:</h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                  <li>Search and select a Bible verse from the dropdown</li>
+                  <li>Submit your guess to see how close you are</li>
+                  <li>Green boxes mean correct matches, red boxes mean incorrect</li>
+                  <li>Keep guessing until you find the right verse!</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-semibold mb-2">Categories:</h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                  <li>
+                    <strong>Book:</strong> Which book of the Bible
+                  </li>
+                  <li>
+                    <strong>Speaker:</strong> Who said or wrote the verse
+                  </li>
+                  <li>
+                    <strong>Key Word:</strong> An important word from the verse
+                  </li>
+                  <li>
+                    <strong>Location:</strong> Where the verse was spoken/written
+                  </li>
+                  <li>
+                    <strong>Chapter Range:</strong> Approximate chapter range in the book
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-yellow-400 font-semibold mb-2">Beta Notes:</h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-300">
+                  <li>This is a beta version with limited verses for testing</li>
+                  <li>The game continues until you find the correct answer</li>
+                  <li>More verses and features will be added in future updates</li>
+                  <li>Feedback and suggestions are welcome!</li>
+                </ul>
+              </div>
+
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
+                <p className="text-yellow-300 text-xs">
+                  <strong>Current Answer:</strong> The correct verse is Matthew 5:14 - "You are the light of the world"
+                  (Jesus speaking in Galilee, chapters 1-10 range)
+                </p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Content overlay */}
       <div className="relative z-10 py-8 px-4">
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-8">
           {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold text-white drop-shadow-lg">Guess the Verse</h1>
-            <p className="text-white/90 drop-shadow-md">Can you identify the correct Bible verse?</p>
+          <div className="text-center space-y-4">
+            <h1 className="text-5xl font-bold text-yellow-400 drop-shadow-lg">Guess the Verse</h1>
+            <p className="text-white/90 drop-shadow-md text-lg">Can you identify the correct Bible verse?</p>
           </div>
 
-          {/* Game Card - Smaller width */}
-          <div className="max-w-md mx-auto">
-            <Card className="shadow-2xl bg-white/80 backdrop-blur-sm border-white/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-gray-800">
-                  <Book className="w-5 h-5" />
-                  Select Your Guess
-                </CardTitle>
-                <CardDescription className="text-gray-600">
-                  Search and select the Bible verse you think matches the clues
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Verse Selector */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Bible Verse</label>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={open}
-                        className="w-full justify-between h-auto min-h-[2.5rem] text-left bg-white/80 backdrop-blur-sm border-gray-200"
-                        disabled={gameOver || isRevealing}
-                      >
-                        {selectedVerse ? (
-                          <div className="flex flex-col items-start">
-                            <span className="font-medium">"{selectedVerse.text}"</span>
-                            <span className="text-sm text-gray-500">
-                              {selectedVerse.reference} ({selectedVerse.version})
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-gray-500">Search for a Bible verse...</span>
-                        )}
-                        <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0 bg-white/95 backdrop-blur-sm" align="start">
-                      <Command>
-                        <CommandInput placeholder="Search verses..." />
-                        <CommandList>
-                          <CommandEmpty>No verse found.</CommandEmpty>
-                          <CommandGroup>
-                            {sampleVerses.map((verse) => (
-                              <CommandItem
-                                key={verse.id}
-                                value={`${verse.text} ${verse.reference}`}
-                                onSelect={() => {
-                                  setSelectedVerse(verse)
-                                  setOpen(false)
-                                }}
-                                className="flex flex-col items-start p-3"
-                              >
-                                <span className="font-medium">"{verse.text}"</span>
-                                <span className="text-sm text-gray-500">
-                                  {verse.reference} ({verse.version})
-                                </span>
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                {/* Submit Button */}
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={!selectedVerse || gameOver || isRevealing}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
+          {/* Game Panel - Exact LoLdle Style */}
+          <div className="max-w-xl mx-auto">
+            {/* Single Panel with dark background and yellow border */}
+            <div className="bg-[#1e2328] border-2 border-yellow-500 rounded-xl p-6 space-y-4">
+              {/* Input Panel */}
+              <div className="relative">
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      className="w-full bg-transparent border-2 border-gray-600 rounded-lg px-4 py-3 text-left text-gray-400 focus:outline-none focus:border-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed pr-16"
+                      disabled={gameOver || isRevealing}
+                    >
+                      {selectedVerse ? (
+                        <div className="flex flex-col items-start">
+                          <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
+                          <span className="text-xs text-gray-500">
+                            {selectedVerse.reference} ({selectedVerse.version})
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-gray-500">Type verse reference or text...</span>
+                      )}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-full p-0 bg-gray-800/95 backdrop-blur-sm border-cyan-400/50"
+                    align="start"
                   >
-                    {isRevealing ? "Revealing..." : gameOver ? (hasWon ? "You Won!" : "Game Over") : "Submit Guess"}
+                    <Command className="bg-transparent">
+                      <CommandInput
+                        placeholder="Search verses..."
+                        className="bg-transparent border-none text-white placeholder-gray-400"
+                      />
+                      <CommandList className="bg-transparent">
+                        <CommandEmpty className="text-gray-400">No verse found.</CommandEmpty>
+                        <CommandGroup>
+                          {sampleVerses.map((verse) => (
+                            <CommandItem
+                              key={verse.id}
+                              value={`${verse.text} ${verse.reference}`}
+                              onSelect={() => {
+                                setSelectedVerse(verse)
+                                setOpen(false)
+                              }}
+                              className="flex flex-col items-start p-3 text-white hover:bg-gray-700/50"
+                            >
+                              <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
+                              <span className="text-xs text-gray-400">
+                                {verse.reference} ({verse.version})
+                              </span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
+                {/* Submit Button - Exact LoLdle Style */}
+                <button
+                  onClick={handleSubmit}
+                  disabled={!selectedVerse || gameOver || isRevealing}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-full w-10 h-10 flex items-center justify-center transition-colors"
+                >
+                  <ArrowRight className="w-4 h-4 text-black" />
+                </button>
+              </div>
+            </div>
+
+            {/* Status Text */}
+            <div className="text-center mt-4">
+              {gameOver ? (
+                <div className="space-y-4">
+                  <p className="text-yellow-400 font-semibold">
+                    {hasWon ? "Congratulations! You found the correct verse!" : "Game Over!"}
+                  </p>
+                  <Button
+                    onClick={resetGame}
+                    className="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-6 py-2"
+                  >
+                    Play Again
                   </Button>
-                  {gameOver && (
-                    <Button onClick={resetGame} variant="outline" className="bg-white/80 backdrop-blur-sm">
-                      Play Again
-                    </Button>
-                  )}
                 </div>
-              </CardContent>
-            </Card>
+              ) : isRevealing ? (
+                <p className="text-cyan-400">Revealing results...</p>
+              ) : null}
+            </div>
           </div>
 
-          {/* Feedback Card - Show all guesses - Full width */}
+          {/* Feedback Card - Show all guesses */}
           {guesses.length > 0 && (
             <Card className="shadow-2xl bg-white/80 backdrop-blur-sm border-white/20">
               <CardHeader>
-                <CardTitle className="text-blue-400">1938 Have already found the verse today!</CardTitle>
-                {/* <CardDescription className="text-gray-600">
+                <CardTitle className="text-blue-900">Your Guesses</CardTitle>
+                <CardDescription className="text-gray-600">
                   {gameOver
                     ? hasWon
                       ? "Congratulations! You found the correct verse!"
                       : `Game over! The correct answer was: ${correctAnswer.book} - ${correctAnswer.speaker} - ${correctAnswer.randomWord} - ${correctAnswer.location} - ${correctAnswer.chapterRange}`
                     : "Keep guessing to find the correct verse"}
-                </CardDescription> */}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
