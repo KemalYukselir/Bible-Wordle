@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import Image from "next/image"
 
 // Expanded Bible verses data with Location
 const sampleVerses = [
@@ -360,13 +361,20 @@ export default function GuessTheVerse() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url(/background.avif)",
-        }}
-      >
+      {/* High Quality Background Image using Next.js Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/background.avif"
+          alt="Background"
+          fill
+          priority
+          quality={100}
+          sizes="100vw"
+          className="object-cover object-center"
+          style={{
+            imageRendering: "crisp-edges",
+          }}
+        />
         {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-black/20"></div>
       </div>
