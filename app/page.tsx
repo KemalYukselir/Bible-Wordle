@@ -237,7 +237,7 @@ const correctAnswer = {
   speaker: "Jesus",
   randomWord: "light",
   location: "Galilee",
-  chapterRange: "1-10",
+  chapterRange: "1-5",
 }
 
 export default function GuessTheVerse() {
@@ -470,14 +470,14 @@ export default function GuessTheVerse() {
           {guesses.length > 0 && (
             <Card className="shadow-2xl bg-white/80 backdrop-blur-sm border-white/20">
               <CardHeader>
-                <CardTitle className="text-blue-900">Your Guesses</CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardTitle className="text-blue-400">1938 Have already found the verse today!</CardTitle>
+                {/* <CardDescription className="text-gray-600">
                   {gameOver
                     ? hasWon
                       ? "Congratulations! You found the correct verse!"
                       : `Game over! The correct answer was: ${correctAnswer.book} - ${correctAnswer.speaker} - ${correctAnswer.randomWord} - ${correctAnswer.location} - ${correctAnswer.chapterRange}`
                     : "Keep guessing to find the correct verse"}
-                </CardDescription>
+                </CardDescription> */}
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
