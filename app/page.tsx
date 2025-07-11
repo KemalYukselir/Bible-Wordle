@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { ArrowRight, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
@@ -28,7 +28,7 @@ const sampleVerses = [
     randomWord: "light",
     location: "Galilee",
     chapterRange: "1-10", // Sermon on the Mount
-    verseNumber: "14",  // Final chapter
+    verseNumber: "14", // Final chapter
   },
   {
     id: 2,
@@ -40,7 +40,7 @@ const sampleVerses = [
     randomWord: "loved",
     location: "Jerusalem",
     chapterRange: "1-5", // Nicodemus encounter
-    verseNumber: "10",  // Final chapter
+    verseNumber: "10", // Final chapter
   },
   {
     id: 3,
@@ -52,7 +52,7 @@ const sampleVerses = [
     randomWord: "things",
     location: "Prison",
     chapterRange: "1-5",
-    verseNumber: "16",  // Final chapter
+    verseNumber: "16", // Final chapter
   },
   {
     id: 4,
@@ -64,7 +64,7 @@ const sampleVerses = [
     randomWord: "shepherd",
     location: "Wilderness",
     chapterRange: "21-30", // Single psalm
-    verseNumber: "16", 
+    verseNumber: "16",
   },
   {
     id: 5,
@@ -76,7 +76,7 @@ const sampleVerses = [
     randomWord: "trust",
     location: "Jerusalem",
     chapterRange: "1-5", // Wisdom chapter
-    verseNumber: "16", 
+    verseNumber: "16",
   },
   {
     id: 6,
@@ -88,8 +88,8 @@ const sampleVerses = [
     randomWord: "courageous",
     location: "Jordan River",
     chapterRange: "1-5", // Leadership transition
-    verseNumber: "16", 
-  }
+    verseNumber: "16",
+  },
 ]
 
 // Correct answer for the game (this would normally come from your game logic)
@@ -99,7 +99,7 @@ const correctAnswer = {
   randomWord: "light",
   location: "Galilee",
   chapterRange: "1-10",
-  verseNumber: "16", 
+  verseNumber: "16",
 }
 
 export default function GuessTheVerse() {
@@ -108,7 +108,14 @@ export default function GuessTheVerse() {
   const [guesses, setGuesses] = useState<
     Array<{
       verse: (typeof sampleVerses)[0]
-      feedback: { book: boolean; speaker: boolean; randomWord: boolean; location: boolean; chapterRange: boolean; verseNumber: boolean }
+      feedback: {
+        book: boolean
+        speaker: boolean
+        randomWord: boolean
+        location: boolean
+        chapterRange: boolean
+        verseNumber: boolean
+      }
       revealedCategories: {
         book: boolean
         speaker: boolean
@@ -132,14 +139,20 @@ export default function GuessTheVerse() {
       randomWord: selectedVerse.randomWord === correctAnswer.randomWord,
       location: selectedVerse.location === correctAnswer.location,
       chapterRange: selectedVerse.chapterRange === correctAnswer.chapterRange,
-      verseNumber: selectedVerse.verseNumber === correctAnswer.verseNumber
-
+      verseNumber: selectedVerse.verseNumber === correctAnswer.verseNumber,
     }
 
     const newGuess = {
       verse: selectedVerse,
       feedback: newFeedback,
-      revealedCategories: { book: false, speaker: false, randomWord: false, location: false, chapterRange: false , verseNumber: false},
+      revealedCategories: {
+        book: false,
+        speaker: false,
+        randomWord: false,
+        location: false,
+        chapterRange: false,
+        verseNumber: false,
+      },
     }
 
     const updatedGuesses = [...guesses, newGuess]
@@ -254,7 +267,7 @@ export default function GuessTheVerse() {
       </div>
 
       {/* README Button - Top Right */}
-      <div className="absolute top-4 right-4 z-20">
+      <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-20">
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -327,86 +340,87 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Content overlay */}
-      <div className="relative z-10 py-8 px-4 mt-24">
+      <div className="relative z-10 py-4 sm:py-8 px-2 sm:px-4 mt-16 sm:mt-24">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
-            <h1 className="text-5xl font-bold text-yellow-400 drop-shadow-lg">Guess the Verse</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-yellow-400 drop-shadow-lg">
+              Guess the Verse
+            </h1>
           </div>
 
-        {/* Game Panel - Exact LoLdle Style */}
-        <div className="flex flex-col items-center">
-          {/* Single Panel with dark background and yellow border */}
-          <div className="w-full max-w-md bg-[#1e2328] text-white/90 border-2 border-yellow-500 rounded-xl p-6 flex items-center justify-center text-center">
-            Can you identify the correct Bible verse?
-          </div>
+          {/* Game Panel - Exact LoLdle Style */}
+          <div className="flex flex-col items-center">
+            {/* Single Panel with dark background and yellow border */}
+            <div className="w-full max-w-xs sm:max-w-md bg-[#1e2328] text-white/90 border-2 border-yellow-500 rounded-xl p-4 sm:p-6 flex items-center justify-center text-center text-sm sm:text-base">
+              Can you identify the correct Bible verse?
+            </div>
 
-          {/* Input Panel - Now outside and below the dark box */}
-          <div className="relative mt-4 w-full max-w-sm">
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <button
-                  className="w-full bg-[#1e2328] border-2 border-cyan-400/50 px-4 py-3 text-left text-blue-400 focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed pr-16"
-                  disabled={gameOver || isRevealing}
+            {/* Input Panel - Now outside and below the dark box */}
+            <div className="relative mt-4 w-full max-w-xs sm:max-w-sm">
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    className="w-full bg-[#1e2328] border-2 border-cyan-400/50 px-4 py-3 text-left text-blue-400 focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed pr-16"
+                    disabled={gameOver || isRevealing}
+                  >
+                    {selectedVerse ? (
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium text-blue-300 text-sm">"{selectedVerse.text}"</span>
+                        <span className="text-xs text-blue-500">
+                          {selectedVerse.reference} ({selectedVerse.version})
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-blue-500">Type verse reference or text...</span>
+                    )}
+                  </button>
+                </PopoverTrigger>
+
+                <PopoverContent
+                  className="w-full max-w-xs sm:max-w-2xl p-0 bg-gray-800/95 backdrop-blur-sm border-cyan-400/50"
+                  align="start"
                 >
-                  {selectedVerse ? (
-                    <div className="flex flex-col items-start">
-                      <span className="font-medium text-blue-300 text-sm">"{selectedVerse.text}"</span>
-                      <span className="text-xs text-blue-500">
-                        {selectedVerse.reference} ({selectedVerse.version})
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-blue-500">Type verse reference or text...</span>
-                  )}
-                </button>
-              </PopoverTrigger>
+                  <Command className="bg-gray-800/95">
+                    <CommandInput
+                      placeholder="Search verses..."
+                      className="bg-transparent border-none text-white placeholder-gray-400"
+                    />
+                    <CommandList className="bg-gray-800/95">
+                      <CommandEmpty className="text-gray-400">No verse found.</CommandEmpty>
+                      <CommandGroup>
+                        {sampleVerses.map((verse) => (
+                          <CommandItem
+                            key={verse.id}
+                            value={`${verse.text} ${verse.reference}`}
+                            onSelect={() => {
+                              setSelectedVerse(verse)
+                              setOpen(false)
+                            }}
+                            className="flex flex-col items-start p-3 text-white hover:bg-gray-700/50"
+                          >
+                            <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
+                            <span className="text-xs text-gray-400">
+                              {verse.reference} ({verse.version})
+                            </span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
 
-              <PopoverContent
-                className="w-full max-w-2xl p-0 bg-gray-800/95 backdrop-blur-sm border-cyan-400/50"
-                align="start"
+              {/* Submit Button - Exact LoLdle Style */}
+              <button
+                onClick={handleSubmit}
+                disabled={!selectedVerse || gameOver || isRevealing}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 border border-yellow-400 bg-white-500 hover:bg-white disabled:bg-white-600 disabled:cursor-not-allowed rounded-full w-10 h-10 flex items-center justify-center transition-colors"
               >
-                <Command className="bg-gray-800/95">
-                  <CommandInput
-                    placeholder="Search verses..."
-                    className="bg-transparent border-none text-white placeholder-gray-400"
-                  />
-                  <CommandList className="bg-gray-800/95">
-                    <CommandEmpty className="text-gray-400">No verse found.</CommandEmpty>
-                    <CommandGroup>
-                      {sampleVerses.map((verse) => (
-                        <CommandItem
-                          key={verse.id}
-                          value={`${verse.text} ${verse.reference}`}
-                          onSelect={() => {
-                            setSelectedVerse(verse)
-                            setOpen(false)
-                          }}
-                          className="flex flex-col items-start p-3 text-white hover:bg-gray-700/50"
-                        >
-                          <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
-                          <span className="text-xs text-gray-400">
-                            {verse.reference} ({verse.version})
-                          </span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-
-            {/* Submit Button - Exact LoLdle Style */}
-            <button
-              onClick={handleSubmit}
-              disabled={!selectedVerse || gameOver || isRevealing}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 border border-yellow-400 bg-white-500 hover:bg-white disabled:bg-white-600 disabled:cursor-not-allowed rounded-full w-10 h-10 flex items-center justify-center transition-colors"
-            >
-              <ArrowRight className="w-5 h-5 text-yellow-400" />
-            </button>
+                <ArrowRight className="w-5 h-5 text-yellow-400" />
+              </button>
+            </div>
           </div>
-        </div>
-
 
           {/* Status Text */}
           <div className="text-center mt-4">
@@ -429,12 +443,12 @@ export default function GuessTheVerse() {
         </div>
 
         {/* Feedback Card - Show all guesses backdrop-blur-sm */}
-        {guesses.length > 0 && ( 
-          <Card className="bg-transparent border-transparent max-w-4xl mx-auto">
+        {guesses.length > 0 && (
+          <Card className="bg-transparent border-transparent max-w-xs sm:max-w-2xl lg:max-w-4xl mx-auto">
             <CardHeader>
               <CardTitle className="text-white">
                 <span className="text-green-500">129</span> Guesses Today
-              </CardTitle>            
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
@@ -445,11 +459,11 @@ export default function GuessTheVerse() {
                     </div>
 
                     {/* Category Headers and Boxes - Now 6 columns */}
-                    <div className="grid grid-cols-6 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
                       <div className="text-center">
-                        <h3 className="font-semibold text-white mb-3 text-sm">Book</h3>
+                        <h3 className="font-semibold text-white mb-2 sm:mb-3 text-xs sm:text-sm">Book</h3>
                         <div
-                          className={`p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
+                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
                             guess.revealedCategories.book
                               ? guess.feedback.book
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -457,16 +471,16 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-xs">
+                          <div className="font-bold text-xs sm:text-sm">
                             {guess.revealedCategories.book ? guess.verse.book : "?"}
                           </div>
                         </div>
                       </div>
 
                       <div className="text-center">
-                        <h3 className="font-semibold text-white mb-3 text-sm">Speaker</h3>
+                        <h3 className="font-semibold text-white mb-2 sm:mb-3 text-xs sm:text-sm">Speaker</h3>
                         <div
-                          className={`p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
+                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
                             guess.revealedCategories.speaker
                               ? guess.feedback.speaker
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -474,16 +488,16 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-xs">
+                          <div className="font-bold text-xs sm:text-sm">
                             {guess.revealedCategories.speaker ? guess.verse.speaker : "?"}
                           </div>
                         </div>
                       </div>
 
                       <div className="text-center">
-                        <h3 className="font-semibold text-white mb-3 text-sm">Key Word</h3>
+                        <h3 className="font-semibold text-white mb-2 sm:mb-3 text-xs sm:text-sm">Key Word</h3>
                         <div
-                          className={`p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
+                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
                             guess.revealedCategories.randomWord
                               ? guess.feedback.randomWord
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -491,16 +505,16 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-xs">
+                          <div className="font-bold text-xs sm:text-sm">
                             {guess.revealedCategories.randomWord ? guess.verse.randomWord : "?"}
                           </div>
                         </div>
                       </div>
 
                       <div className="text-center">
-                        <h3 className="font-semibold text-white mb-3 text-sm">Location</h3>
+                        <h3 className="font-semibold text-white mb-2 sm:mb-3 text-xs sm:text-sm">Location</h3>
                         <div
-                          className={`p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
+                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
                             guess.revealedCategories.location
                               ? guess.feedback.location
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -508,16 +522,16 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-xs">
+                          <div className="font-bold text-xs sm:text-sm">
                             {guess.revealedCategories.location ? guess.verse.location : "?"}
                           </div>
                         </div>
                       </div>
 
                       <div className="text-center">
-                        <h3 className="font-semibold text-white mb-3 text-sm">Chapter Range</h3>
+                        <h3 className="font-semibold text-white mb-2 sm:mb-3 text-xs sm:text-sm">Chapter Range</h3>
                         <div
-                          className={`p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
+                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
                             guess.revealedCategories.chapterRange
                               ? guess.feedback.chapterRange
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -525,16 +539,16 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-xs">
+                          <div className="font-bold text-xs sm:text-sm">
                             {guess.revealedCategories.chapterRange ? guess.verse.chapterRange : "?"}
                           </div>
                         </div>
                       </div>
 
                       <div className="text-center">
-                        <h3 className="font-semibold text-white mb-3 text-sm">Verse Range</h3>
+                        <h3 className="font-semibold text-white mb-2 sm:mb-3 text-xs sm:text-sm">Verse Range</h3>
                         <div
-                          className={`p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
+                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
                             guess.revealedCategories.verseNumber
                               ? guess.feedback.verseNumber
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -542,7 +556,7 @@ export default function GuessTheVerse() {
                               : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-xs">
+                          <div className="font-bold text-xs sm:text-sm">
                             {guess.revealedCategories.verseNumber ? guess.verse.verseNumber : "?"}
                           </div>
                         </div>
