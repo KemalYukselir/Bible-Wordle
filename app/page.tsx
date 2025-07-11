@@ -461,19 +461,20 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Content overlay */}
-      <div className="relative z-10 py-8 px-4">
+      <div className="relative z-10 py-8 px-4 mt-24">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
             <h1 className="text-5xl font-bold text-yellow-400 drop-shadow-lg">Guess the Verse</h1>
-            <p className="text-white/90 drop-shadow-md text-lg">Can you identify the correct Bible verse?</p>
+            {/* <p className="text-white/90 drop-shadow-md text-lg">Can you identify the correct Bible verse?</p> */}
           </div>
 
           {/* Game Panel - Exact LoLdle Style */}
           <div className="max-w-xl mx-auto">
             {/* Single Panel with dark background and yellow border */}
-            <div className="bg-[#1e2328] border-2 border-yellow-500 rounded-xl p-6 space-y-4">
+            <div className="bg-[#1e2328] text-white/90 border-2 border-yellow-500 rounded-xl p-6 flex items-center justify-center text-center h-64">
               {/* This panel is now empty or can contain other content */}
+              Can you identify the correct Bible verse?
             </div>
 
             {/* Input Panel - Now outside and below the dark box */}
@@ -558,18 +559,11 @@ export default function GuessTheVerse() {
           </div>
         </div>
 
-        {/* Feedback Card - Show all guesses */}
-        {guesses.length > 0 && (
-          <Card className="shadow-2xl bg-white/80 backdrop-blur-sm border-white/20">
+        {/* Feedback Card - Show all guesses backdrop-blur-sm */}
+        {guesses.length > 0 && ( 
+          <Card className="bg-transparent border-transparent max-w-4xl mx-auto">
             <CardHeader>
-              <CardTitle className="text-blue-900">Your Guesses</CardTitle>
-              <CardDescription className="text-gray-600">
-                {gameOver
-                  ? hasWon
-                    ? "Congratulations! You found the correct verse!"
-                    : `Game over! The correct answer was: ${correctAnswer.book} - ${correctAnswer.speaker} - ${correctAnswer.randomWord} - ${correctAnswer.location} - ${correctAnswer.chapterRange}`
-                  : "Keep guessing to find the correct verse"}
-              </CardDescription>
+              <CardTitle className="text-blue-900">129 Guesses Today</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
