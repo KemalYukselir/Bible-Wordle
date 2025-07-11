@@ -28,6 +28,7 @@ const sampleVerses = [
     randomWord: "light",
     location: "Galilee",
     chapterRange: "1-10", // Sermon on the Mount
+    verseNumber: "14",  // Final chapter
   },
   {
     id: 2,
@@ -39,6 +40,7 @@ const sampleVerses = [
     randomWord: "loved",
     location: "Jerusalem",
     chapterRange: "1-5", // Nicodemus encounter
+    verseNumber: "10",  // Final chapter
   },
   {
     id: 3,
@@ -49,7 +51,8 @@ const sampleVerses = [
     speaker: "Paul",
     randomWord: "things",
     location: "Prison",
-    chapterRange: "1-5", // Final chapter
+    chapterRange: "1-5",
+    verseNumber: "16",  // Final chapter
   },
   {
     id: 4,
@@ -61,6 +64,7 @@ const sampleVerses = [
     randomWord: "shepherd",
     location: "Wilderness",
     chapterRange: "21-30", // Single psalm
+    verseNumber: "16", 
   },
   {
     id: 5,
@@ -72,6 +76,7 @@ const sampleVerses = [
     randomWord: "trust",
     location: "Jerusalem",
     chapterRange: "1-5", // Wisdom chapter
+    verseNumber: "16", 
   },
   {
     id: 6,
@@ -83,161 +88,8 @@ const sampleVerses = [
     randomWord: "courageous",
     location: "Jordan River",
     chapterRange: "1-5", // Leadership transition
-  },
-  {
-    id: 7,
-    text: "Love your neighbor as yourself",
-    reference: "Matthew 22:39",
-    version: "ESV",
-    book: "Matthew",
-    speaker: "Jesus",
-    randomWord: "neighbor",
-    location: "Temple",
-    chapterRange: "1-10", // Temple teachings
-  },
-  {
-    id: 8,
-    text: "Be still and know that I am God",
-    reference: "Psalm 46:10",
-    version: "ESV",
-    book: "Psalms",
-    speaker: "God",
-    randomWord: "still",
-    location: "Zion",
-    chapterRange: "21-30", // Single psalm
-  },
-  {
-    id: 9,
-    text: "Fear not, for I am with you",
-    reference: "Isaiah 41:10",
-    version: "ESV",
-    book: "Isaiah",
-    speaker: "God",
-    randomWord: "fear",
-    location: "Babylon",
-    chapterRange: "36-45", // Comfort chapters
-  },
-  {
-    id: 10,
-    text: "Rejoice in the Lord always",
-    reference: "Philippians 4:4",
-    version: "ESV",
-    book: "Philippians",
-    speaker: "Paul",
-    randomWord: "rejoice",
-    location: "Prison",
-    chapterRange: "1-5", // Final chapter
-  },
-  {
-    id: 11,
-    text: "Cast all your anxiety on him",
-    reference: "1 Peter 5:7",
-    version: "ESV",
-    book: "1 Peter",
-    speaker: "Peter",
-    randomWord: "anxiety",
-    location: "Rome",
-    chapterRange: "1-5", // Final chapter
-  },
-  {
-    id: 12,
-    text: "Seek first the kingdom of God",
-    reference: "Matthew 6:33",
-    version: "ESV",
-    book: "Matthew",
-    speaker: "Jesus",
-    randomWord: "kingdom",
-    location: "Galilee",
-    chapterRange: "1-10", // Sermon on the Mount
-  },
-  {
-    id: 13,
-    text: "Come to me, all who are weary",
-    reference: "Matthew 11:28",
-    version: "ESV",
-    book: "Matthew",
-    speaker: "Jesus",
-    randomWord: "weary",
-    location: "Galilee",
-    chapterRange: "1-10", // Ministry teachings
-  },
-  {
-    id: 14,
-    text: "The joy of the Lord is your strength",
-    reference: "Nehemiah 8:10",
-    version: "ESV",
-    book: "Nehemiah",
-    speaker: "Nehemiah",
-    randomWord: "joy",
-    location: "Jerusalem",
-    chapterRange: "6-10", // Law reading
-  },
-  {
-    id: 15,
-    text: "Walk by faith, not by sight",
-    reference: "2 Corinthians 5:7",
-    version: "ESV",
-    book: "2 Corinthians",
-    speaker: "Paul",
-    randomWord: "faith",
-    location: "Corinth",
-    chapterRange: "1-5", // Ministry chapter
-  },
-  {
-    id: 16,
-    text: "God works all things for good",
-    reference: "Romans 8:28",
-    version: "ESV",
-    book: "Romans",
-    speaker: "Paul",
-    randomWord: "good",
-    location: "Rome",
-    chapterRange: "6-10", // Spirit chapter
-  },
-  {
-    id: 17,
-    text: "I am the way, the truth, and the life",
-    reference: "John 14:6",
-    version: "ESV",
-    book: "John",
-    speaker: "Jesus",
-    randomWord: "way",
-    location: "Upper Room",
-    chapterRange: "11-15", // Farewell discourse
-  },
-  {
-    id: 18,
-    text: "Be transformed by the renewal of your mind",
-    reference: "Romans 12:2",
-    version: "ESV",
-    book: "Romans",
-    speaker: "Paul",
-    randomWord: "transformed",
-    location: "Rome",
-    chapterRange: "6-10", // Living sacrifice
-  },
-  {
-    id: 19,
-    text: "The Lord your God is with you wherever you go",
-    reference: "Joshua 1:9",
-    version: "ESV",
-    book: "Joshua",
-    speaker: "God",
-    randomWord: "wherever",
-    location: "Jordan River",
-    chapterRange: "1-5", // Leadership transition
-  },
-  {
-    id: 20,
-    text: "Love is patient, love is kind",
-    reference: "1 Corinthians 13:4",
-    version: "ESV",
-    book: "1 Corinthians",
-    speaker: "Paul",
-    randomWord: "patient",
-    location: "Corinth",
-    chapterRange: "11-15", // Love chapter
-  },
+    verseNumber: "16", 
+  }
 ]
 
 // Correct answer for the game (this would normally come from your game logic)
@@ -247,6 +99,7 @@ const correctAnswer = {
   randomWord: "light",
   location: "Galilee",
   chapterRange: "1-10",
+  verseNumber: "16", 
 }
 
 export default function GuessTheVerse() {
@@ -255,13 +108,14 @@ export default function GuessTheVerse() {
   const [guesses, setGuesses] = useState<
     Array<{
       verse: (typeof sampleVerses)[0]
-      feedback: { book: boolean; speaker: boolean; randomWord: boolean; location: boolean; chapterRange: boolean }
+      feedback: { book: boolean; speaker: boolean; randomWord: boolean; location: boolean; chapterRange: boolean; verseNumber: boolean }
       revealedCategories: {
         book: boolean
         speaker: boolean
         randomWord: boolean
         location: boolean
         chapterRange: boolean
+        verseNumber: boolean
       }
     }>
   >([])
@@ -278,12 +132,14 @@ export default function GuessTheVerse() {
       randomWord: selectedVerse.randomWord === correctAnswer.randomWord,
       location: selectedVerse.location === correctAnswer.location,
       chapterRange: selectedVerse.chapterRange === correctAnswer.chapterRange,
+      verseNumber: selectedVerse.verseNumber === correctAnswer.verseNumber
+
     }
 
     const newGuess = {
       verse: selectedVerse,
       feedback: newFeedback,
-      revealedCategories: { book: false, speaker: false, randomWord: false, location: false, chapterRange: false },
+      revealedCategories: { book: false, speaker: false, randomWord: false, location: false, chapterRange: false , verseNumber: false},
     }
 
     const updatedGuesses = [...guesses, newGuess]
@@ -341,8 +197,18 @@ export default function GuessTheVerse() {
             : guess,
         ),
       )
+    }, 1500)
 
-      // Only end the game if they win - remove the else condition
+    setTimeout(() => {
+      setGuesses((prev) =>
+        prev.map((guess, index) =>
+          index === currentGuessIndex
+            ? { ...guess, revealedCategories: { ...guess.revealedCategories, verseNumber: true } }
+            : guess,
+        ),
+      )
+
+      // Only end the game if they wåin - remove the else condition
       const won = Object.values(newFeedback).every(Boolean)
       if (won) {
         setHasWon(true)
@@ -578,8 +444,8 @@ export default function GuessTheVerse() {
                       Guess {index + 1}: "{guess.verse.text}" - {guess.verse.reference}
                     </div>
 
-                    {/* Category Headers and Boxes - Now 5 columns */}
-                    <div className="grid grid-cols-5 gap-3">
+                    {/* Category Headers and Boxes - Now 6 columns */}
+                    <div className="grid grid-cols-6 gap-3">
                       <div className="text-center">
                         <h3 className="font-semibold text-white mb-3 text-sm">Book</h3>
                         <div
@@ -661,6 +527,23 @@ export default function GuessTheVerse() {
                         >
                           <div className="font-bold text-xs">
                             {guess.revealedCategories.chapterRange ? guess.verse.chapterRange : "?"}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-center">
+                        <h3 className="font-semibold text-white mb-3 text-sm">Verse Range</h3>
+                        <div
+                          className={`p-3 rounded-lg border-2 transition-all duration-500 border-1 border-white transform ${
+                            guess.revealedCategories.verseNumber
+                              ? guess.feedback.verseNumber
+                                ? "bg-green-500 border-green-600 text-white scale-105"
+                                : "bg-red-500 border-red-600 text-white scale-105"
+                              : "bg-gray-300 border-gray-400 text-gray-600 scale-95"
+                          }`}
+                        >
+                          <div className="font-bold text-xs">
+                            {guess.revealedCategories.verseNumber ? guess.verse.verseNumber : "?"}
                           </div>
                         </div>
                       </div>
