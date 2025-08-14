@@ -1,10 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowRight, BookOpen } from "lucide-react"
+import { ArrowRight, BookOpen, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import {
   Dialog,
   DialogContent,
@@ -17,7 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 
-// Expanded Bible verses data with Location
+// Bible verses data
 const sampleVerses = [
   {
     id: 1,
@@ -41,7 +39,7 @@ const sampleVerses = [
     randomWord: "loved",
     location: "Jerusalem",
     chapterRange: "1-5",
-    verseNumber: "10",
+    verseNumber: "16",
   },
   {
     id: 3,
@@ -53,7 +51,7 @@ const sampleVerses = [
     randomWord: "things",
     location: "Prison",
     chapterRange: "1-5",
-    verseNumber: "16",
+    verseNumber: "13",
   },
   {
     id: 4,
@@ -65,7 +63,7 @@ const sampleVerses = [
     randomWord: "shepherd",
     location: "Wilderness",
     chapterRange: "21-30",
-    verseNumber: "16",
+    verseNumber: "1",
   },
   {
     id: 5,
@@ -77,7 +75,7 @@ const sampleVerses = [
     randomWord: "trust",
     location: "Jerusalem",
     chapterRange: "1-5",
-    verseNumber: "16",
+    verseNumber: "5",
   },
   {
     id: 6,
@@ -89,7 +87,7 @@ const sampleVerses = [
     randomWord: "courageous",
     location: "Jordan River",
     chapterRange: "1-5",
-    verseNumber: "16",
+    verseNumber: "9",
   },
 ]
 
@@ -104,8 +102,9 @@ const correctAnswer = {
 }
 
 export default function GuessTheVerse() {
-  const [open, setOpen] = useState(false)
   const [selectedVerse, setSelectedVerse] = useState<(typeof sampleVerses)[0] | null>(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
   const [guesses, setGuesses] = useState<
     Array<{
       verse: (typeof sampleVerses)[0]
@@ -130,6 +129,19 @@ export default function GuessTheVerse() {
   const [gameOver, setGameOver] = useState(false)
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
+
+  // Filter verses based on search term
+  const filteredVerses = sampleVerses.filter(
+    (verse) =>
+      verse.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      verse.reference.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
+
+  const handleVerseSelect = (verse: (typeof sampleVerses)[0]) => {
+    setSelectedVerse(verse)
+    setDropdownOpen(false)
+    setSearchTerm("")
+  }
 
   const handleSubmit = () => {
     if (!selectedVerse || gameOver || isRevealing) return
@@ -160,80 +172,40 @@ export default function GuessTheVerse() {
     setGuesses(updatedGuesses)
     setIsRevealing(true)
 
-    // Animate the reveal of categories from left to right
+    // Animate the reveal of categories
     const currentGuessIndex = updatedGuesses.length - 1
+    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"] as const
 
-    setTimeout(() => {
-      setGuesses((prev) =>
-        prev.map((guess, index) =>
-          index === currentGuessIndex
-            ? { ...guess, revealedCategories: { ...guess.revealedCategories, book: true } }
-            : guess,
-        ),
+    categories.forEach((category, index) => {
+      setTimeout(
+        () => {
+          setGuesses((prev) =>
+            prev.map((guess, guessIndex) =>
+              guessIndex === currentGuessIndex
+                ? { ...guess, revealedCategories: { ...guess.revealedCategories, [category]: true } }
+                : guess,
+            ),
+          )
+        },
+        (index + 1) * 300,
       )
-    }, 300)
+    })
 
-    setTimeout(() => {
-      setGuesses((prev) =>
-        prev.map((guess, index) =>
-          index === currentGuessIndex
-            ? { ...guess, revealedCategories: { ...guess.revealedCategories, speaker: true } }
-            : guess,
-        ),
-      )
-    }, 600)
-
-    setTimeout(() => {
-      setGuesses((prev) =>
-        prev.map((guess, index) =>
-          index === currentGuessIndex
-            ? { ...guess, revealedCategories: { ...guess.revealedCategories, randomWord: true } }
-            : guess,
-        ),
-      )
-    }, 900)
-
-    setTimeout(() => {
-      setGuesses((prev) =>
-        prev.map((guess, index) =>
-          index === currentGuessIndex
-            ? { ...guess, revealedCategories: { ...guess.revealedCategories, location: true } }
-            : guess,
-        ),
-      )
-    }, 1200)
-
-    setTimeout(() => {
-      setGuesses((prev) =>
-        prev.map((guess, index) =>
-          index === currentGuessIndex
-            ? { ...guess, revealedCategories: { ...guess.revealedCategories, chapterRange: true } }
-            : guess,
-        ),
-      )
-    }, 1500)
-
-    setTimeout(() => {
-      setGuesses((prev) =>
-        prev.map((guess, index) =>
-          index === currentGuessIndex
-            ? { ...guess, revealedCategories: { ...guess.revealedCategories, verseNumber: true } }
-            : guess,
-        ),
-      )
-
-      const won = Object.values(newFeedback).every(Boolean)
-      if (won) {
-        setHasWon(true)
-        setGameOver(true)
-      }
-
-      setIsRevealing(false)
-    }, 1800)
+    // Check if won and finish revealing
+    setTimeout(
+      () => {
+        const won = Object.values(newFeedback).every(Boolean)
+        if (won) {
+          setHasWon(true)
+          setGameOver(true)
+        }
+        setIsRevealing(false)
+      },
+      categories.length * 300 + 200,
+    )
 
     // Reset selection for next guess
     setSelectedVerse(null)
-    setOpen(false)
   }
 
   const resetGame = () => {
@@ -242,7 +214,8 @@ export default function GuessTheVerse() {
     setGameOver(false)
     setHasWon(false)
     setIsRevealing(false)
-    setOpen(false)
+    setDropdownOpen(false)
+    setSearchTerm("")
   }
 
   return (
@@ -257,14 +230,11 @@ export default function GuessTheVerse() {
           quality={100}
           sizes="100vw"
           className="object-cover object-center"
-          style={{
-            imageRendering: "crisp-edges",
-          }}
         />
         <div className="absolute inset-0 bg-black/60"></div>
       </div>
 
-      {/* README Button - Top Right */}
+      {/* README Button */}
       <div className="absolute top-4 right-4 z-20">
         <Dialog>
           <DialogTrigger asChild>
@@ -286,41 +256,25 @@ export default function GuessTheVerse() {
             </DialogHeader>
             <ScrollArea className="h-[60vh] pr-4">
               <div className="space-y-6 text-sm">
-                {/* Game Overview */}
                 <section>
-                  <h3 className="text-yellow-400 font-bold text-lg mb-3 flex items-center gap-2">🎮 Game Overview</h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    VERSELE is a modern, interactive Bible verse guessing game inspired by Wordle and LoLdle. Test your
-                    knowledge of Scripture by identifying the correct Bible verse based on various clues and categories.
-                    Each day features a new verse to discover!
-                  </p>
-                </section>
-
-                <Separator className="bg-gray-700" />
-
-                {/* How to Play */}
-                <section>
-                  <h3 className="text-yellow-400 font-bold text-lg mb-3 flex items-center gap-2">📖 How to Play</h3>
+                  <h3 className="text-yellow-400 font-bold text-lg mb-3">🎮 How to Play</h3>
                   <div className="space-y-3">
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-2">Step 1: Search & Select</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-2">Step 1: Select a Verse</h4>
                       <p className="text-gray-300">
-                        Use the search dropdown to find and select a Bible verse from the available options. Type any
-                        part of the verse text or reference to filter results.
+                        Click the dropdown to see all available verses. You can search by typing part of the verse text
+                        or reference.
                       </p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-2">Step 2: Submit Your Guess</h4>
                       <p className="text-gray-300">
-                        Click the yellow arrow button to submit your guess and see how close you are to the correct
-                        answer.
+                        Click the yellow arrow button to submit your guess and see the results.
                       </p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-2">Step 3: Review Feedback</h4>
-                      <p className="text-gray-300">
-                        Watch as each category is revealed with animated color-coded results:
-                      </p>
+                      <h4 className="text-cyan-400 font-semibold mb-2">Step 3: Review Results</h4>
+                      <p className="text-gray-300">Watch as each category reveals with color coding:</p>
                       <ul className="list-disc list-inside mt-2 space-y-1 text-gray-400">
                         <li>
                           🟢 <strong className="text-green-400">Green</strong>: Correct match
@@ -333,232 +287,52 @@ export default function GuessTheVerse() {
                         </li>
                       </ul>
                     </div>
-                    <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-2">Step 4: Keep Guessing</h4>
-                      <p className="text-gray-300">
-                        Continue making guesses until you find the correct verse. Use the feedback from previous guesses
-                        to narrow down your options!
-                      </p>
-                    </div>
                   </div>
                 </section>
 
                 <Separator className="bg-gray-700" />
 
-                {/* Game Categories */}
                 <section>
-                  <h3 className="text-yellow-400 font-bold text-lg mb-3 flex items-center gap-2">📊 Game Categories</h3>
-                  <p className="text-gray-300 mb-4">Each guess is evaluated across 6 different categories:</p>
+                  <h3 className="text-yellow-400 font-bold text-lg mb-3">📊 Game Categories</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">📖 Book</h4>
-                      <p className="text-gray-300 text-xs">Which book of the Bible (e.g., Matthew, John, Psalms)</p>
+                      <p className="text-gray-300 text-xs">Which book of the Bible</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">🗣️ Speaker</h4>
-                      <p className="text-gray-300 text-xs">Who said or wrote the verse (e.g., Jesus, Paul, David)</p>
+                      <p className="text-gray-300 text-xs">Who said or wrote the verse</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">🔑 Key Word</h4>
-                      <p className="text-gray-300 text-xs">An important word from the verse</p>
+                      <p className="text-gray-300 text-xs">Important word from the verse</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">📍 Location</h4>
-                      <p className="text-gray-300 text-xs">Where the verse was spoken or written</p>
+                      <p className="text-gray-300 text-xs">Where it was spoken/written</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">📑 Chapter Range</h4>
-                      <p className="text-gray-300 text-xs">Approximate chapter range within the book</p>
+                      <p className="text-gray-300 text-xs">Chapter range in the book</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">🔢 Verse Range</h4>
-                      <p className="text-gray-300 text-xs">The verse number range</p>
+                      <h4 className="text-cyan-400 font-semibold mb-1">🔢 Verse Number</h4>
+                      <p className="text-gray-300 text-xs">The verse number</p>
                     </div>
                   </div>
                 </section>
 
                 <Separator className="bg-gray-700" />
 
-                {/* Current Features */}
                 <section>
-                  <h3 className="text-yellow-400 font-bold text-lg mb-3 flex items-center gap-2">
-                    ✨ Current Features
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-green-400">✓</span>
-                      <span className="text-sm">Interactive gameplay with animated reveals</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-green-400">✓</span>
-                      <span className="text-sm">Mobile responsive design</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-green-400">✓</span>
-                      <span className="text-sm">Modern gaming-inspired UI</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-green-400">✓</span>
-                      <span className="text-sm">Built-in help system</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-green-400">✓</span>
-                      <span className="text-sm">Progress tracking</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-green-400">✓</span>
-                      <span className="text-sm">Smart verse search</span>
-                    </div>
-                  </div>
-                </section>
-
-                <Separator className="bg-gray-700" />
-
-                {/* Bible Verses Database */}
-                <section>
-                  <h3 className="text-yellow-400 font-bold text-lg mb-3 flex items-center gap-2">
-                    📜 Bible Verses Database
-                  </h3>
-                  <p className="text-gray-300 mb-3">
-                    The game currently includes carefully selected verses from various books of the Bible:
-                  </p>
+                  <h3 className="text-yellow-400 font-bold text-lg mb-3">📜 Available Verses</h3>
                   <div className="space-y-2">
-                    <div className="bg-gray-800/50 rounded-lg p-2">
-                      <span className="text-cyan-400 font-semibold">Matthew 5:14</span>
-                      <span className="text-gray-300"> - "You are the light of the world"</span>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2">
-                      <span className="text-cyan-400 font-semibold">John 3:16</span>
-                      <span className="text-gray-300"> - "For God so loved the world"</span>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2">
-                      <span className="text-cyan-400 font-semibold">Philippians 4:13</span>
-                      <span className="text-gray-300"> - "I can do all things through Christ"</span>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2">
-                      <span className="text-cyan-400 font-semibold">Psalm 23:1</span>
-                      <span className="text-gray-300"> - "The Lord is my shepherd"</span>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2">
-                      <span className="text-cyan-400 font-semibold">Proverbs 3:5</span>
-                      <span className="text-gray-300"> - "Trust in the Lord with all your heart"</span>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2">
-                      <span className="text-cyan-400 font-semibold">Joshua 1:9</span>
-                      <span className="text-gray-300"> - "Be strong and courageous"</span>
-                    </div>
-                  </div>
-                  <p className="text-gray-400 text-xs mt-3 italic">
-                    *More verses will be added in future updates to expand the challenge!*
-                  </p>
-                </section>
-
-                <Separator className="bg-gray-700" />
-
-                {/* Coming Soon */}
-                <section>
-                  <h3 className="text-yellow-400 font-bold text-lg mb-3 flex items-center gap-2">🚀 Coming Soon</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-yellow-400">⏳</span>
-                      <span className="text-sm">Daily challenge mode</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-yellow-400">⏳</span>
-                      <span className="text-sm">Difficulty levels (Easy/Medium/Hard)</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-yellow-400">⏳</span>
-                      <span className="text-sm">Category filters (OT/NT/Psalms)</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-yellow-400">⏳</span>
-                      <span className="text-sm">Speed mode challenges</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-yellow-400">⏳</span>
-                      <span className="text-sm">Multiplayer competitions</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-yellow-400">⏳</span>
-                      <span className="text-sm">Detailed statistics & achievements</span>
-                    </div>
-                  </div>
-                </section>
-
-                <Separator className="bg-gray-700" />
-
-                {/* Tech Stack */}
-                <section>
-                  <h3 className="text-yellow-400 font-bold text-lg mb-3 flex items-center gap-2">🛠️ Tech Stack</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                    <div className="bg-gray-800/50 rounded-lg p-2 text-center">
-                      <div className="text-cyan-400 font-semibold">Next.js 15</div>
-                      <div className="text-gray-400 text-xs">React Framework</div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2 text-center">
-                      <div className="text-cyan-400 font-semibold">TypeScript</div>
-                      <div className="text-gray-400 text-xs">Type Safety</div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2 text-center">
-                      <div className="text-cyan-400 font-semibold">Tailwind CSS</div>
-                      <div className="text-gray-400 text-xs">Styling</div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2 text-center">
-                      <div className="text-cyan-400 font-semibold">shadcn/ui</div>
-                      <div className="text-gray-400 text-xs">UI Components</div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2 text-center">
-                      <div className="text-cyan-400 font-semibold">Lucide React</div>
-                      <div className="text-gray-400 text-xs">Icons</div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-2 text-center">
-                      <div className="text-cyan-400 font-semibold">CSS Animations</div>
-                      <div className="text-gray-400 text-xs">Smooth Transitions</div>
-                    </div>
-                  </div>
-                </section>
-
-                <Separator className="bg-gray-700" />
-
-                {/* Tips & Strategies */}
-                <section>
-                  <h3 className="text-yellow-400 font-bold text-lg mb-3 flex items-center gap-2">
-                    💡 Tips & Strategies
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-3">
-                      <h4 className="text-blue-400 font-semibold mb-1">🎯 Start with Popular Verses</h4>
-                      <p className="text-gray-300 text-sm">
-                        Begin with well-known verses like John 3:16 or Psalm 23:1 to get familiar with the game
-                        mechanics.
-                      </p>
-                    </div>
-                    <div className="bg-green-900/30 border border-green-500/30 rounded-lg p-3">
-                      <h4 className="text-green-400 font-semibold mb-1">📖 Pay Attention to Speakers</h4>
-                      <p className="text-gray-300 text-sm">
-                        Jesus, Paul, and David are common speakers. Use this information to narrow down your guesses.
-                      </p>
-                    </div>
-                    <div className="bg-purple-900/30 border border-purple-500/30 rounded-lg p-3">
-                      <h4 className="text-purple-400 font-semibold mb-1">🗺️ Consider Historical Context</h4>
-                      <p className="text-gray-300 text-sm">
-                        Location clues can help identify the setting - Jerusalem, Galilee, or Prison contexts give
-                        valuable hints.
-                      </p>
-                    </div>
-                  </div>
-                </section>
-
-                <Separator className="bg-gray-700" />
-
-                {/* Footer */}
-                <section className="text-center">
-                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
-                    <p className="text-yellow-300 font-semibold mb-2">Made with ❤️ and ✝️ for the body of Christ</p>
-                    <p className="text-gray-400 text-sm italic">
-                      "Your word is a lamp to my feet and a light to my path." - Psalm 119:105
-                    </p>
+                    {sampleVerses.map((verse) => (
+                      <div key={verse.id} className="bg-gray-800/50 rounded-lg p-2">
+                        <span className="text-cyan-400 font-semibold">{verse.reference}</span>
+                        <span className="text-gray-300"> - "{verse.text}"</span>
+                      </div>
+                    ))}
                   </div>
                 </section>
               </div>
@@ -569,9 +343,8 @@ export default function GuessTheVerse() {
 
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
-        {/* Simple New Versele Logo Design */}
+        {/* Logo */}
         <div className="mb-12 text-center">
-          {/* Main Logo Text */}
           <h1
             className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-wide mb-3"
             style={{
@@ -586,90 +359,56 @@ export default function GuessTheVerse() {
           >
             VERSELE
           </h1>
-
-          {/* Bright Yellow Subtitle */}
           <p
             className="text-xl sm:text-2xl font-bold tracking-wide"
             style={{
               color: "#FDE047",
               textShadow: "0 0 15px rgba(253, 224, 71, 0.6), 0 2px 4px rgba(0,0,0,0.8)",
               filter: "drop-shadow(0 0 10px rgba(253, 224, 71, 0.4))",
-              fontFamily: "system-ui, -apple-system, sans-serif",
             }}
           >
             Guess the verse Challenge
           </p>
         </div>
 
-        {/* Main Game Panel */}
+        {/* Game Panel */}
         <div className="w-full max-w-md">
           <div className="bg-gray-800/80 backdrop-blur-sm border-2 border-yellow-500/50 rounded-xl p-8 mb-6">
             <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
-            <p className="text-gray-400 text-center mb-6">Type any verse reference to begin.</p>
+            <p className="text-gray-400 text-center mb-6">Select a verse to make your guess.</p>
 
-            {/* Input Field */}
-            <div className="relative">
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <button
-                    className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed pr-20 hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30"
-                    style={{
-                      boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-                    }}
-                    disabled={gameOver || isRevealing}
-                  >
-                    {selectedVerse ? (
-                      <div className="flex flex-col items-start">
-                        <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
-                        <span className="text-xs text-gray-500">
-                          {selectedVerse.reference} ({selectedVerse.version})
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-gray-500 text-base">Type verse reference ...</span>
-                    )}
-                  </button>
-                </PopoverTrigger>
-
-                <PopoverContent
-                  className="w-full max-w-md p-0 bg-gray-800/95 backdrop-blur-sm border-cyan-400/50"
-                  align="start"
-                >
-                  <Command className="bg-gray-800/95">
-                    <CommandInput
-                      placeholder="Search verses..."
-                      className="bg-transparent border-none text-white placeholder-gray-400"
-                    />
-                    <CommandList className="bg-gray-800/95">
-                      <CommandEmpty className="text-gray-400">No verse found.</CommandEmpty>
-                      <CommandGroup>
-                        {sampleVerses.map((verse) => (
-                          <CommandItem
-                            key={verse.id}
-                            value={`${verse.text} ${verse.reference}`}
-                            onSelect={() => {
-                              setSelectedVerse(verse)
-                              setOpen(false)
-                            }}
-                            className="flex flex-col items-start p-3 text-white hover:bg-gray-700/50"
-                          >
-                            <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
-                            <span className="text-xs text-gray-400">
-                              {verse.reference} ({verse.version})
-                            </span>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+            {/* Custom Dropdown */}
+            <div className="relative mb-4">
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                disabled={gameOver || isRevealing}
+                className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed pr-20 hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between"
+                style={{
+                  boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                }}
+              >
+                <div className="flex-1">
+                  {selectedVerse ? (
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
+                      <span className="text-xs text-gray-500">
+                        {selectedVerse.reference} ({selectedVerse.version})
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 text-base">Select a verse...</span>
+                  )}
+                </div>
+                <ChevronDown
+                  className={`w-5 h-5 text-cyan-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+                />
+              </button>
 
               {/* Submit Button */}
               <button
                 onClick={handleSubmit}
                 disabled={!selectedVerse || gameOver || isRevealing}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full transition-all duration-200 disabled:cursor-not-allowed"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full transition-all duration-200 disabled:cursor-not-allowed z-10"
                 style={{
                   background:
                     !selectedVerse || gameOver || isRevealing
@@ -689,17 +428,54 @@ export default function GuessTheVerse() {
                   }}
                 />
               </button>
+
+              {/* Dropdown Menu */}
+              {dropdownOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-50 max-h-64 overflow-hidden">
+                  {/* Search Input */}
+                  <div className="p-3 border-b border-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search verses..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full bg-gray-900/50 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+
+                  {/* Verse List */}
+                  <div className="max-h-48 overflow-y-auto">
+                    {filteredVerses.length > 0 ? (
+                      filteredVerses.map((verse) => (
+                        <button
+                          key={verse.id}
+                          onClick={() => handleVerseSelect(verse)}
+                          className="w-full text-left p-3 hover:bg-gray-700/70 transition-colors border-b border-gray-700/50 last:border-b-0"
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
+                            <span className="text-xs text-gray-400">
+                              {verse.reference} ({verse.version})
+                            </span>
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-gray-400">No verses found</div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Stats Text */}
+          {/* Stats */}
           <div className="text-center mb-6">
             <p className="text-white text-sm">
               <span className="text-yellow-400 font-semibold">129</span> people already found out!
             </p>
           </div>
 
-          {/* Yesterday's Answer */}
           <div className="text-center mb-8">
             <p className="text-white">
               Yesterday's verse was <span className="text-green-400 font-semibold">#23 John 3:16</span>
@@ -731,7 +507,7 @@ export default function GuessTheVerse() {
           )}
         </div>
 
-        {/* Feedback Results */}
+        {/* Results */}
         {guesses.length > 0 && (
           <div className="w-full max-w-4xl mt-8">
             <div className="space-y-6">
@@ -741,109 +517,32 @@ export default function GuessTheVerse() {
                     Guess {index + 1}: "{guess.verse.text}" - {guess.verse.reference}
                   </div>
 
-                  {/* Category Headers and Boxes */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
-                    <div className="text-center">
-                      <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">Book</h3>
-                      <div
-                        className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform ${
-                          guess.revealedCategories.book
-                            ? guess.feedback.book
-                              ? "bg-green-500 border-green-600 text-white scale-105"
-                              : "bg-red-500 border-red-600 text-white scale-105"
-                            : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
-                        }`}
-                      >
-                        <div className="font-bold text-xs sm:text-sm">
-                          {guess.revealedCategories.book ? guess.verse.book : "?"}
+                    {[
+                      { key: "book", label: "Book", value: guess.verse.book },
+                      { key: "speaker", label: "Speaker", value: guess.verse.speaker },
+                      { key: "randomWord", label: "Key Word", value: guess.verse.randomWord },
+                      { key: "location", label: "Location", value: guess.verse.location },
+                      { key: "chapterRange", label: "Chapter Range", value: guess.verse.chapterRange },
+                      { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },
+                    ].map(({ key, label, value }) => (
+                      <div key={key} className="text-center">
+                        <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">{label}</h3>
+                        <div
+                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform ${
+                            guess.revealedCategories[key as keyof typeof guess.revealedCategories]
+                              ? guess.feedback[key as keyof typeof guess.feedback]
+                                ? "bg-green-500 border-green-600 text-white scale-105"
+                                : "bg-red-500 border-red-600 text-white scale-105"
+                              : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
+                          }`}
+                        >
+                          <div className="font-bold text-xs sm:text-sm">
+                            {guess.revealedCategories[key as keyof typeof guess.revealedCategories] ? value : "?"}
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    <div className="text-center">
-                      <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">Speaker</h3>
-                      <div
-                        className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform ${
-                          guess.revealedCategories.speaker
-                            ? guess.feedback.speaker
-                              ? "bg-green-500 border-green-600 text-white scale-105"
-                              : "bg-red-500 border-red-600 text-white scale-105"
-                            : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
-                        }`}
-                      >
-                        <div className="font-bold text-xs sm:text-sm">
-                          {guess.revealedCategories.speaker ? guess.verse.speaker : "?"}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-center">
-                      <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">Key Word</h3>
-                      <div
-                        className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform ${
-                          guess.revealedCategories.randomWord
-                            ? guess.feedback.randomWord
-                              ? "bg-green-500 border-green-600 text-white scale-105"
-                              : "bg-red-500 border-red-600 text-white scale-105"
-                            : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
-                        }`}
-                      >
-                        <div className="font-bold text-xs sm:text-sm">
-                          {guess.revealedCategories.randomWord ? guess.verse.randomWord : "?"}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-center">
-                      <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">Location</h3>
-                      <div
-                        className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform ${
-                          guess.revealedCategories.location
-                            ? guess.feedback.location
-                              ? "bg-green-500 border-green-600 text-white scale-105"
-                              : "bg-red-500 border-red-600 text-white scale-105"
-                            : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
-                        }`}
-                      >
-                        <div className="font-bold text-xs sm:text-sm">
-                          {guess.revealedCategories.location ? guess.verse.location : "?"}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-center">
-                      <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">Chapter Range</h3>
-                      <div
-                        className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform ${
-                          guess.revealedCategories.chapterRange
-                            ? guess.feedback.chapterRange
-                              ? "bg-green-500 border-green-600 text-white scale-105"
-                              : "bg-red-500 border-red-600 text-white scale-105"
-                            : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
-                        }`}
-                      >
-                        <div className="font-bold text-xs sm:text-sm">
-                          {guess.revealedCategories.chapterRange ? guess.verse.chapterRange : "?"}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-center">
-                      <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">Verse Range</h3>
-                      <div
-                        className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform ${
-                          guess.revealedCategories.verseNumber
-                            ? guess.feedback.verseNumber
-                              ? "bg-green-500 border-green-600 text-white scale-105"
-                              : "bg-red-500 border-red-600 text-white scale-105"
-                            : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
-                        }`}
-                      >
-                        <div className="font-bold text-xs sm:text-sm">
-                          {guess.revealedCategories.verseNumber ? guess.verse.verseNumber : "?"}
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
 
                   {index < guesses.length - 1 && <hr className="border-gray-600" />}
