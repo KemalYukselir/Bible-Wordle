@@ -1,65 +1,83 @@
-# backend/seed.py
-import os, json, re
-from pathlib import Path
-from dotenv import load_dotenv
-from google.cloud import firestore
-from google.oauth2 import service_account
+import json
 
-# Always load the .env that sits next to this file
-ENV_PATH = Path(__file__).with_name(".env")
-load_dotenv(dotenv_path=ENV_PATH)
+# Sample Bible verses data
+verses_data = [
+    {
+        "id": 1,
+        "text": "You are the light of the world",
+        "reference": "Matthew 5:14",
+        "version": "ESV",
+        "book": "Matthew",
+        "speaker": "Jesus",
+        "randomWord": "light",
+        "location": "Galilee",
+        "chapterRange": "1-10",
+        "verseNumber": "14"
+    },
+    {
+        "id": 2,
+        "text": "For God so loved the world",
+        "reference": "John 3:16",
+        "version": "ESV",
+        "book": "John",
+        "speaker": "Jesus",
+        "randomWord": "loved",
+        "location": "Jerusalem",
+        "chapterRange": "1-5",
+        "verseNumber": "16"
+    },
+    {
+        "id": 3,
+        "text": "I can do all things through Christ",
+        "reference": "Philippians 4:13",
+        "version": "ESV",
+        "book": "Philippians",
+        "speaker": "Paul",
+        "randomWord": "things",
+        "location": "Prison",
+        "chapterRange": "1-5",
+        "verseNumber": "13"
+    },
+    {
+        "id": 4,
+        "text": "The Lord is my shepherd",
+        "reference": "Psalm 23:1",
+        "version": "ESV",
+        "book": "Psalms",
+        "speaker": "David",
+        "randomWord": "shepherd",
+        "location": "Wilderness",
+        "chapterRange": "21-30",
+        "verseNumber": "1"
+    },
+    {
+        "id": 5,
+        "text": "Trust in the Lord with all your heart",
+        "reference": "Proverbs 3:5",
+        "version": "ESV",
+        "book": "Proverbs",
+        "speaker": "Solomon",
+        "randomWord": "trust",
+        "location": "Jerusalem",
+        "chapterRange": "1-5",
+        "verseNumber": "5"
+    },
+    {
+        "id": 6,
+        "text": "Be strong and courageous",
+        "reference": "Joshua 1:9",
+        "version": "ESV",
+        "book": "Joshua",
+        "speaker": "God",
+        "randomWord": "courageous",
+        "location": "Jordan River",
+        "chapterRange": "1-5",
+        "verseNumber": "9"
+    }
+]
 
-def make_db():
-    project_id = os.getenv("FIREBASE_PROJECT_ID")
-    if not project_id:
-        raise RuntimeError("FIREBASE_PROJECT_ID not set in backend/.env")
+# Write to JSON file
+with open('verses.json', 'w') as f:
+    json.dump(verses_data, f, indent=2)
 
-    # Prefer file
-    sa_file = os.getenv("FIREBASE_CREDENTIALS_FILE")
-    if sa_file:
-        p = Path(sa_file)
-        if not p.is_absolute():
-            p = Path(__file__).parent / p
-        if not p.exists():
-            raise RuntimeError(f"Credential file not found at: {p}")
-        creds = service_account.Credentials.from_service_account_file(str(p))
-        return firestore.Client(project=project_id, credentials=creds)
-
-    # Fallback: inline JSON (must be exact JSON, one line, double quotes, \n in private_key)
-    sa_json = os.getenv("FIREBASE_SERVICE_ACCOUNT")
-    if sa_json and sa_json.strip().startswith("{"):
-        creds = service_account.Credentials.from_service_account_info(json.loads(sa_json))
-        return firestore.Client(project=project_id, credentials=creds)
-
-
-def doc_id_for(v: dict) -> str:
-    if "id" in v and v["id"] is not None:
-        return str(v["id"])
-    ref = str(v.get("reference", "unknown"))
-    return re.sub(r"[^a-z0-9]+", "-", ref.lower()).strip("-") or "unknown"
-
-def chunk(lst, n):
-    for i in range(0, len(lst), n):
-        yield lst[i:i+n]
-
-def main():
-    db = make_db()
-    data_path = Path(__file__).parent / "verses.json"
-    verses = json.loads(data_path.read_text(encoding="utf-8"))
-    if not isinstance(verses, list):
-        raise RuntimeError("verses.json must contain a JSON array")
-
-    col = db.collection("verses")
-    total = 0
-    for group in chunk(verses, 450):  # Firestore batch limit ~500
-        batch = db.batch()
-        for v in group:
-            batch.set(col.document(doc_id_for(v)), v, merge=True)
-        batch.commit()
-        total += len(group)
-        print(f"Committed {total}…")
-
-    print(f"Done. Wrote {total} docs to 'verses'.")
-
-if __name__ == "__main__":
-    main()
+print("verses.json created successfully!")

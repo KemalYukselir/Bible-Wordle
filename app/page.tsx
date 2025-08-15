@@ -141,27 +141,22 @@ export default function GuessTheVerse() {
     setSelectedVerse(verse)
     setDropdownOpen(false)
     setSearchTerm("")
-
-    // Auto-submit the guess when verse is selected
-    setTimeout(() => {
-      handleSubmit()
-    }, 100)
   }
 
-  const handleSubmit = (verseToSubmit = selectedVerse) => {
-    if (!verseToSubmit || gameOver || isRevealing) return
+  const handleSubmit = () => {
+    if (!selectedVerse || gameOver || isRevealing) return
 
     const newFeedback = {
-      book: verseToSubmit.book === correctAnswer.book,
-      speaker: verseToSubmit.speaker === correctAnswer.speaker,
-      randomWord: verseToSubmit.randomWord === correctAnswer.randomWord,
-      location: verseToSubmit.location === correctAnswer.location,
-      chapterRange: verseToSubmit.chapterRange === correctAnswer.chapterRange,
-      verseNumber: verseToSubmit.verseNumber === correctAnswer.verseNumber,
+      book: selectedVerse.book === correctAnswer.book,
+      speaker: selectedVerse.speaker === correctAnswer.speaker,
+      randomWord: selectedVerse.randomWord === correctAnswer.randomWord,
+      location: selectedVerse.location === correctAnswer.location,
+      chapterRange: selectedVerse.chapterRange === correctAnswer.chapterRange,
+      verseNumber: selectedVerse.verseNumber === correctAnswer.verseNumber,
     }
 
     const newGuess = {
-      verse: verseToSubmit,
+      verse: selectedVerse,
       feedback: newFeedback,
       revealedCategories: {
         book: false,
@@ -274,7 +269,7 @@ export default function GuessTheVerse() {
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-2">Step 2: Submit Your Guess</h4>
                       <p className="text-gray-300">
-                        Click the yellow arrow button to submit your guess and see the results.
+                        Click the "GUESS" button to submit your guess and see the results.
                       </p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
@@ -383,7 +378,7 @@ export default function GuessTheVerse() {
             <p className="text-gray-400 text-center mb-6">Select a verse to make your guess.</p>
 
             {/* Custom Dropdown */}
-            <div className="relative mb-4">
+            <div className="relative mb-6">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 disabled={gameOver || isRevealing}
@@ -446,6 +441,26 @@ export default function GuessTheVerse() {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Guess Button */}
+            <div className="flex justify-center">
+              <button
+                onClick={handleSubmit}
+                disabled={!selectedVerse || gameOver || isRevealing}
+                className="w-auto mx-auto py-2 px-6 rounded-lg font-black text-sm tracking-wide transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 shadow-lg border-2"
+                style={{
+                  background: "#374151", // Gray background
+                  borderColor: "#FDE047", // Yellow border
+                  color: "#FDE047", // Yellow text
+                  textShadow: "0 1px 2px rgba(0,0,0,0.8)",
+                  boxShadow: "0 0 20px rgba(253, 224, 71, 0.3), 0 2px 8px rgba(0,0,0,0.2)",
+                  filter: "brightness(1.1) drop-shadow(0 1px 4px rgba(253, 224, 71, 0.2))",
+                  fontFamily: "Impact, 'Arial Black', sans-serif",
+                }}
+              >
+                GUESS
+              </button>
             </div>
           </div>
 
@@ -525,7 +540,7 @@ export default function GuessTheVerse() {
                     ))}
                   </div>
 
-                  {index < guesses.length - 1 && <hr className="border-gray-600" />}
+                  {index < guesses.length - 1 && <div className="border-gray-600"></div>}
                 </div>
               ))}
             </div>
