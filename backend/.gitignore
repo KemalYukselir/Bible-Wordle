@@ -159,4 +159,4 @@ cython_debug/
 #.idea/
 
 # Service account
-versele-fbed6-firebase-adminsdk-fbsvc-c22c52d464.json
+service_account.json
