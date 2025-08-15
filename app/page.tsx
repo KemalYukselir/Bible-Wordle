@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowRight, BookOpen, ChevronDown } from "lucide-react"
+import { BookOpen, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -141,22 +141,27 @@ export default function GuessTheVerse() {
     setSelectedVerse(verse)
     setDropdownOpen(false)
     setSearchTerm("")
+
+    // Auto-submit the guess when verse is selected
+    setTimeout(() => {
+      handleSubmit()
+    }, 100)
   }
 
-  const handleSubmit = () => {
-    if (!selectedVerse || gameOver || isRevealing) return
+  const handleSubmit = (verseToSubmit = selectedVerse) => {
+    if (!verseToSubmit || gameOver || isRevealing) return
 
     const newFeedback = {
-      book: selectedVerse.book === correctAnswer.book,
-      speaker: selectedVerse.speaker === correctAnswer.speaker,
-      randomWord: selectedVerse.randomWord === correctAnswer.randomWord,
-      location: selectedVerse.location === correctAnswer.location,
-      chapterRange: selectedVerse.chapterRange === correctAnswer.chapterRange,
-      verseNumber: selectedVerse.verseNumber === correctAnswer.verseNumber,
+      book: verseToSubmit.book === correctAnswer.book,
+      speaker: verseToSubmit.speaker === correctAnswer.speaker,
+      randomWord: verseToSubmit.randomWord === correctAnswer.randomWord,
+      location: verseToSubmit.location === correctAnswer.location,
+      chapterRange: verseToSubmit.chapterRange === correctAnswer.chapterRange,
+      verseNumber: verseToSubmit.verseNumber === correctAnswer.verseNumber,
     }
 
     const newGuess = {
-      verse: selectedVerse,
+      verse: verseToSubmit,
       feedback: newFeedback,
       revealedCategories: {
         book: false,
@@ -294,7 +299,7 @@ export default function GuessTheVerse() {
 
                 <section>
                   <h3 className="text-yellow-400 font-bold text-lg mb-3">📊 Game Categories</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">📖 Book</h4>
                       <p className="text-gray-300 text-xs">Which book of the Bible</p>
@@ -382,7 +387,7 @@ export default function GuessTheVerse() {
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 disabled={gameOver || isRevealing}
-                className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed pr-20 hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between"
+                className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between"
                 style={{
                   boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
                 }}
@@ -401,31 +406,6 @@ export default function GuessTheVerse() {
                 </div>
                 <ChevronDown
                   className={`w-5 h-5 text-cyan-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {/* Submit Button */}
-              <button
-                onClick={handleSubmit}
-                disabled={!selectedVerse || gameOver || isRevealing}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-14 h-14 rounded-full transition-all duration-200 disabled:cursor-not-allowed z-10"
-                style={{
-                  background:
-                    !selectedVerse || gameOver || isRevealing
-                      ? "linear-gradient(135deg, #6b7280 0%, #4b5563 100%)"
-                      : "linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%)",
-                  boxShadow:
-                    !selectedVerse || gameOver || isRevealing
-                      ? "0 4px 15px rgba(0, 0, 0, 0.3)"
-                      : "0 0 25px rgba(251, 191, 36, 0.4), 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
-                  border: "2px solid #fbbf24",
-                }}
-              >
-                <ArrowRight
-                  className="w-6 h-6 text-yellow-400 drop-shadow-sm mx-auto"
-                  style={{
-                    filter: "drop-shadow(0 1px 2px rgba(251, 191, 36, 0.3))",
-                  }}
                 />
               </button>
 
