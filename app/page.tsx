@@ -15,7 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 
-import versesFromJson from '@/data/loaded_verses.json' // ← your JSON file
+import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 
 const sampleVerses = versesFromJson
 
@@ -270,7 +270,7 @@ export default function GuessTheVerse() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
         {/* Logo */}
-        <div className="mb-12 text-center">
+        <div className="mb-16 text-center">
           <h1
             className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-wide mb-3"
             style={{
@@ -388,19 +388,6 @@ export default function GuessTheVerse() {
                 GUESS
               </button>
             </div>
-          </div>
-
-          {/* Stats */}
-          <div className="text-center mb-6">
-            <p className="text-white text-sm">
-              <span className="text-yellow-400 font-semibold">129</span> people already found out!
-            </p>
-          </div>
-
-          <div className="text-center mb-8">
-            <p className="text-white">
-              Yesterday's verse was <span className="text-green-400 font-semibold">#23 John 3:16</span>
-            </p>
           </div>
 
           {/* Game Over Actions */}
