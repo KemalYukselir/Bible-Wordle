@@ -157,3 +157,6 @@ cython_debug/
 #  be added to the global gitignore or merged into this project gitignore.  For a PyCharm
 #  project, it is common to ignore the entire .idea directory.
 #.idea/
+
+# Service account
+versele-fbed6-firebase-adminsdk-fbsvc-c22c52d464.json
