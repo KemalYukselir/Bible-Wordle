@@ -15,93 +15,18 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
 
-// Bible verses data
-const sampleVerses = [
-  {
-    id: 1,
-    text: "You are the light of the world",
-    reference: "Matthew 5:14",
-    version: "ESV",
-    book: "Matthew",
-    speaker: "Jesus",
-    randomWord: "light",
-    location: "Galilee",
-    chapterRange: "1-10",
-    verseNumber: "14",
-  },
-  {
-    id: 2,
-    text: "For God so loved the world",
-    reference: "John 3:16",
-    version: "ESV",
-    book: "John",
-    speaker: "Jesus",
-    randomWord: "loved",
-    location: "Jerusalem",
-    chapterRange: "1-5",
-    verseNumber: "16",
-  },
-  {
-    id: 3,
-    text: "I can do all things through Christ",
-    reference: "Philippians 4:13",
-    version: "ESV",
-    book: "Philippians",
-    speaker: "Paul",
-    randomWord: "things",
-    location: "Prison",
-    chapterRange: "1-5",
-    verseNumber: "13",
-  },
-  {
-    id: 4,
-    text: "The Lord is my shepherd",
-    reference: "Psalm 23:1",
-    version: "ESV",
-    book: "Psalms",
-    speaker: "David",
-    randomWord: "shepherd",
-    location: "Wilderness",
-    chapterRange: "21-30",
-    verseNumber: "1",
-  },
-  {
-    id: 5,
-    text: "Trust in the Lord with all your heart",
-    reference: "Proverbs 3:5",
-    version: "ESV",
-    book: "Proverbs",
-    speaker: "Solomon",
-    randomWord: "trust",
-    location: "Jerusalem",
-    chapterRange: "1-5",
-    verseNumber: "5",
-  },
-  {
-    id: 6,
-    text: "Be strong and courageous",
-    reference: "Joshua 1:9",
-    version: "ESV",
-    book: "Joshua",
-    speaker: "God",
-    randomWord: "courageous",
-    location: "Jordan River",
-    chapterRange: "1-5",
-    verseNumber: "9",
-  },
-]
+import versesFromJson from '@/data/loaded_verses.json' // ← your JSON file
 
-// Correct answer for the game
-const correctAnswer = {
-  book: "Matthew",
-  speaker: "Jesus",
-  randomWord: "light",
-  location: "Galilee",
-  chapterRange: "1-10",
-  verseNumber: "14",
+const sampleVerses = versesFromJson
+
+const getRandomVerse = () => {
+  const index = Math.floor(Math.random() * versesFromJson.length)
+  return versesFromJson[index]
 }
 
 export default function GuessTheVerse() {
+  // Correct answer for the game
+  const [correctAnswer, setCorrectAnswer] = useState(getRandomVerse())
   const [selectedVerse, setSelectedVerse] = useState<(typeof sampleVerses)[0] | null>(null)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -216,6 +141,7 @@ export default function GuessTheVerse() {
     setIsRevealing(false)
     setDropdownOpen(false)
     setSearchTerm("")
+    setCorrectAnswer(getRandomVerse())
   }
 
   return (
