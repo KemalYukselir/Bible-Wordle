@@ -1,0 +1,74 @@
+[
+  {
+    "text": "You are the light of the world",
+    "version": "ESV",
+    "id": "1",
+    "speaker": "Jesus",
+    "chapterRange": "1-10",
+    "verseNumber": "14",
+    "randomWord": "light",
+    "location": "Galilee",
+    "book": "Matthew",
+    "reference": "Matthew 5:14"
+  },
+  {
+    "text": "For God so loved the world",
+    "version": "ESV",
+    "id": "2",
+    "speaker": "Jesus",
+    "chapterRange": "1-5",
+    "verseNumber": "16",
+    "randomWord": "loved",
+    "location": "Jerusalem",
+    "book": "John",
+    "reference": "John 3:16"
+  },
+  {
+    "text": "I can do all things through Christ",
+    "version": "ESV",
+    "id": "3",
+    "speaker": "Paul",
+    "chapterRange": "1-5",
+    "verseNumber": "13",
+    "randomWord": "things",
+    "location": "Prison",
+    "book": "Philippians",
+    "reference": "Philippians 4:13"
+  },
+  {
+    "text": "The Lord is my shepherd",
+    "version": "ESV",
+    "id": "4",
+    "speaker": "David",
+    "chapterRange": "21-30",
+    "verseNumber": "1",
+    "randomWord": "shepherd",
+    "location": "Wilderness",
+    "book": "Psalms",
+    "reference": "Psalm 23:1"
+  },
+  {
+    "text": "Trust in the Lord with all your heart",
+    "version": "ESV",
+    "id": "5",
+    "speaker": "Solomon",
+    "chapterRange": "1-5",
+    "verseNumber": "5",
+    "randomWord": "trust",
+    "location": "Jerusalem",
+    "book": "Proverbs",
+    "reference": "Proverbs 3:5"
+  },
+  {
+    "text": "Be strong and courageous",
+    "version": "ESV",
+    "id": "6",
+    "speaker": "God",
+    "chapterRange": "1-5",
+    "verseNumber": "9",
+    "randomWord": "courageous",
+    "location": "Jordan River",
+    "book": "Joshua",
+    "reference": "Joshua 1:9"
+  }
+]
