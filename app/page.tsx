@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { BookOpen, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,14 +19,25 @@ import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 
 const sampleVerses = versesFromJson
 
-const getRandomVerse = () => {
-  const index = Math.floor(Math.random() * versesFromJson.length)
-  return versesFromJson[index]
-}
+// const getRandomVerse = () => {
+//   const index = Math.floor(Math.random() * versesFromJson.length)
+//   return versesFromJson[index]
+// }
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000"
+  
+// async function loadVerseOfTheDay() {
+//   const res = await fetch(`${API_BASE}/today`);
+//   const data = await res.json();
+//   console.log("Verse of the day:", data);
+//   // e.g. show hint to the user
+// }
 
 export default function GuessTheVerse() {
   // Correct answer for the game
-  const [correctAnswer, setCorrectAnswer] = useState(getRandomVerse())
+  const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
+  const [loading, setLoading] = useState(true)
+
   const [selectedVerse, setSelectedVerse] = useState<(typeof sampleVerses)[0] | null>(null)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -54,6 +65,38 @@ export default function GuessTheVerse() {
   const [gameOver, setGameOver] = useState(false)
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
+
+    // ⬇️ load today's verse from the backend once
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
+        const data = await res.json() as { id?: string } & Record<string, any>
+
+        // prefer matching by id (most reliable)
+        let match = data?.id ? sampleVerses.find(v => v.id === data.id) : undefined
+
+        // fallback: try by reference if your backend returns ref but not id
+        if (!match && data?.ref) {
+          match = sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+        }
+
+        if (match) {
+          setCorrectAnswer(match)
+        } else {
+          // ultimate fallback: keep UX working with first item
+          setCorrectAnswer(sampleVerses[0])
+          console.warn("Backend verse not found in local JSON; using fallback.")
+        }
+      } catch (e) {
+        console.error("Failed to load verse of the day:", e)
+        // fallback so the app still works
+        setCorrectAnswer(sampleVerses[0])
+      } finally {
+        setLoading(false)
+      }
+    })()
+  }, [])
 
   // Filter verses based on search term
   const filteredVerses = sampleVerses.filter(
@@ -133,7 +176,7 @@ export default function GuessTheVerse() {
     setSelectedVerse(null)
   }
 
-  const resetGame = () => {
+  const resetGame = async () => {
     setSelectedVerse(null)
     setGuesses([])
     setGameOver(false)
@@ -141,7 +184,18 @@ export default function GuessTheVerse() {
     setIsRevealing(false)
     setDropdownOpen(false)
     setSearchTerm("")
-    setCorrectAnswer(getRandomVerse())
+    // re-fetch (still same verse same day)
+    try {
+      setLoading(true)
+      const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
+      const data = await res.json()
+      const match = sampleVerses.find(v => v.id === data.id) || sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+      setCorrectAnswer(match || sampleVerses[0])
+    } catch {
+      setCorrectAnswer(sampleVerses[0])
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
