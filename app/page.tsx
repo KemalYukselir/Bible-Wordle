@@ -98,6 +98,45 @@ export default function GuessTheVerse() {
     })()
   }, [])
 
+  // single daily key for everything
+  const todayKey = new Date().toISOString().slice(0,10)
+  const stateKey = `versele:state:${todayKey}`
+
+  // ✅ NEW: track hydration so we don't save too early (React Strict Mode)
+  const [hydrated, setHydrated] = useState(false)
+
+  // Load saved state on mount (runs before we allow saving)
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    try {
+      const saved = localStorage.getItem(stateKey)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        const { guesses, gameOver, hasWon } = parsed || {}
+        if (Array.isArray(guesses)) setGuesses(guesses)
+        if (typeof gameOver === "boolean") setGameOver(gameOver)
+        if (typeof hasWon === "boolean") setHasWon(hasWon)
+      }
+    } catch (e) {
+      console.warn("Failed to load saved state", e)
+    } finally {
+      setHydrated(true)            // ✅ only now are we allowed to save
+    }
+  }, [stateKey])
+
+  // Save whenever guesses/gameOver/hasWon change — BUT only after hydration
+  useEffect(() => {
+    if (!hydrated) return          // ✅ guard fixes the clobbering in dev
+    try {
+      const saveData = { guesses, gameOver, hasWon }
+      localStorage.setItem(stateKey, JSON.stringify(saveData))
+    } catch (e) {
+      console.warn("Failed to save state", e)
+    }
+  }, [hydrated, guesses, gameOver, hasWon, stateKey])
+
+
+
   // Filter verses based on search term
   const filteredVerses = sampleVerses.filter(
     (verse) =>
@@ -445,21 +484,34 @@ export default function GuessTheVerse() {
           </div>
 
           {/* Game Over Actions */}
-          {gameOver && (
-            <div className="text-center mb-8">
-              <div className="space-y-4">
-                <p className="text-yellow-400 font-semibold text-lg">
-                  {hasWon ? "Congratulations! You found the correct verse!" : "Game Over!"}
-                </p>
-                <Button
-                  onClick={resetGame}
-                  className="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold px-8 py-3"
-                >
-                  Play Again
-                </Button>
+          {gameOver && hasWon && correctAnswer && (
+            <div className="mt-8 text-center">
+              <h2 className="text-green-400 font-bold text-xl mb-4">
+                🎉 You found it in {guesses.length} {guesses.length === 1 ? "attempt" : "attempts"}!
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+                {[
+                  { key: "book", label: "Book", value: correctAnswer.book },
+                  { key: "speaker", label: "Speaker", value: correctAnswer.speaker },
+                  { key: "randomWord", label: "Key Word", value: correctAnswer.randomWord },
+                  { key: "location", label: "Location", value: correctAnswer.location },
+                  { key: "chapterRange", label: "Chapter Range", value: correctAnswer.chapterRange },
+                  { key: "verseNumber", label: "Verse Number", value: correctAnswer.verseNumber },
+                ].map(({ key, label, value }) => (
+                  <div key={key} className="text-center">
+                    <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">{label}</h3>
+                    <div className="p-2 sm:p-3 rounded-lg border-2 bg-green-500 border-green-600 text-white scale-105 transition-all duration-500">
+                      <div className="font-bold text-xs sm:text-sm">{value}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
+              <p className="mt-4 text-yellow-300 font-semibold">
+                ✅ {correctAnswer.reference} — "{correctAnswer.text}"
+              </p>
             </div>
           )}
+
 
           {/* Revealing Status */}
           {isRevealing && (
