@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/*"
+  from = "https://versele.netlify.app/*"
   to = "https://versele.org"
   status = 301
   force = true
