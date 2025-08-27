@@ -259,9 +259,10 @@ export default function GuessTheVerse() {
               <span className="text-white text-xs">Hidden</span>
             </div>
           </div>
+          <div className="mt-3 pt-2 border-t border-gray-600">
+            <span className="text-white font-medium text-xs">Version: ESV</span>
+          </div>
         </div>
-
-        <span className="text-white font-medium text-xs">Version: ESV</span>
       </div>
 
       {/* README Button */}
