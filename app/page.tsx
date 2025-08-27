@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import Image from "next/image"
 
 import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 
@@ -242,21 +241,7 @@ export default function GuessTheVerse() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/background.avif"
-          alt="Background"
-          fill
-          priority
-          quality={100}
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/60"></div>
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* README Button */}
       <div className="absolute top-4 right-4 z-20">
         <Dialog>
@@ -366,39 +351,22 @@ export default function GuessTheVerse() {
 
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
-        {/* Logo */}
         <div className="mb-16 text-center">
-          <h1
-            className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-wide mb-3"
-            style={{
-              background: "linear-gradient(135deg, #FCD34D 0%, #F59E0B 30%, #D97706 70%, #FCD34D 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              textShadow: "0 0 20px rgba(252, 211, 77, 0.4)",
-              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))",
-              fontFamily: "Impact, 'Arial Black', sans-serif",
-            }}
-          >
-            VERSELE
-          </h1>
-          <p
-            className="text-xl sm:text-2xl font-bold tracking-wide"
-            style={{
-              color: "#FDE047",
-              textShadow: "0 0 15px rgba(253, 224, 71, 0.6), 0 2px 4px rgba(0,0,0,0.8)",
-              filter: "drop-shadow(0 0 10px rgba(253, 224, 71, 0.4))",
-            }}
-          >
-            Guess the verse Challenge
-          </p>
+          <div className="flex items-center justify-center mb-4">
+            <div className="bg-yellow-500 rounded-lg p-3 mr-3">
+              <BookOpen className="w-8 h-8 text-gray-900" />
+            </div>
+            <h1 className="text-5xl sm:text-6xl font-bold text-white tracking-tight">VERSELE</h1>
+          </div>
+          <p className="text-lg sm:text-xl text-gray-300 font-medium">Daily Bible Verse Challenge</p>
         </div>
 
         {/* Game Panel */}
         <div className="w-full max-w-md mb-12">
-          <div className="bg-gray-800/80 backdrop-blur-sm border-4 border-yellow-500 rounded-xl p-8 mb-6">
+          <div className="bg-gray-800/80 backdrop-blur-sm border-3 border-yellow-500 rounded-xl p-8 mb-6">
             <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
-            <p className="text-gray-400 text-center mb-6">Select a verse to make your guess.</p>
+            <p className="text-gray-400 text-center mb-2">Select a verse to make your guess.</p>
+            <p className="text-yellow-400 text-center text-sm mb-6">1,247 people have guessed today</p>
 
             {/* Custom Dropdown */}
             <div className="relative mb-6">
@@ -490,7 +458,7 @@ export default function GuessTheVerse() {
 
         {/* Correct Answer Section */}
         {gameOver && hasWon && correctAnswer && (
-          <div className="w-full max-w-4xl bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 mb-8 border-4 border-yellow-500">
+          <div className="w-full max-w-4xl bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 mb-8 border-3 border-yellow-500">
             <div className="text-center">
               <h2 className="text-green-400 font-bold text-xl mb-6">
                 🎉 You found it in {guesses.length} {guesses.length === 1 ? "attempt" : "attempts"}!
@@ -535,7 +503,7 @@ export default function GuessTheVerse() {
 
         {/* User Input Status Section */}
         {isRevealing && (
-          <div className="w-full max-w-md bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 mb-8 border-4 border-yellow-500">
+          <div className="w-full max-w-md bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 mb-8 border-3 border-yellow-500">
             <div className="text-center">
               <p className="text-cyan-400 font-medium">Revealing results...</p>
             </div>
@@ -544,7 +512,7 @@ export default function GuessTheVerse() {
 
         {/* Guess Results Section */}
         {guesses.length > 0 && (
-          <div className="w-full max-w-4xl bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border-4 border-yellow-500 mb-16">
+          <div className="w-full max-w-4xl bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 mb-16">
             <h3 className="text-white font-bold text-lg mb-6 text-center">Your Guesses</h3>
             <div className="space-y-8">
               {guesses.map((guess, index) => (
@@ -590,7 +558,7 @@ export default function GuessTheVerse() {
           </div>
         )}
 
-        <div className="w-full max-w-md bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border-4 border-yellow-500 mt-8">
+        <div className="w-full max-w-md bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 mt-8">
           <div className="text-center">
             <h3 className="text-white font-bold text-lg mb-4">Follow Us</h3>
             <div className="flex justify-center gap-4">
