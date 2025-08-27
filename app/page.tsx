@@ -241,19 +241,8 @@ export default function GuessTheVerse() {
   }
 
   return (
-    <div
-      className="min-h-screen relative"
-      style={{
-        backgroundImage:
-          "url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="absolute inset-0 bg-black/40"></div>
-
-      <div className="absolute top-4 left-4 z-20">
+    <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      <div className="fixed top-4 left-4 z-20 flex gap-3">
         <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10">
           <h4 className="text-white font-semibold text-xs mb-2">Color Guide</h4>
           <div className="space-y-1">
@@ -270,6 +259,10 @@ export default function GuessTheVerse() {
               <span className="text-white text-xs">Hidden</span>
             </div>
           </div>
+        </div>
+
+        <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10">
+          <h4 className="text-white font-semibold text-xs mb-1">Version: ESV</h4>
         </div>
       </div>
 
@@ -335,27 +328,27 @@ export default function GuessTheVerse() {
                   <h3 className="text-yellow-400 font-bold text-lg mb-3">📊 Game Categories</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-6">
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">📖 Book</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Book</h4>
                       <p className="text-gray-300 text-xs">Which book of the Bible</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">🗣️ Speaker</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Speaker</h4>
                       <p className="text-gray-300 text-xs">Who said or wrote the verse</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">🔑 Key Word</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Key Word</h4>
                       <p className="text-gray-300 text-xs">Important word from the verse</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">📍 Location</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Location</h4>
                       <p className="text-gray-300 text-xs">Where it was spoken/written</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">📑 Chapter Range</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Chapter Range</h4>
                       <p className="text-gray-300 text-xs">Chapter range in the book</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">🔢 Verse Number</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Verse Number</h4>
                       <p className="text-gray-300 text-xs">The verse number</p>
                     </div>
                   </div>
@@ -494,12 +487,12 @@ export default function GuessTheVerse() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
                 {[
-                  { key: "book", label: "📖 Book 📖", value: correctAnswer.book },
-                  { key: "speaker", label: "🗣️ Speaker 🗣️", value: correctAnswer.speaker },
-                  { key: "randomWord", label: "🔑 Key Word 🔑", value: correctAnswer.randomWord },
-                  { key: "location", label: "📍 Location 📍", value: correctAnswer.location },
-                  { key: "chapterRange", label: "📑 Chapter Range 📑", value: correctAnswer.chapterRange },
-                  { key: "verseNumber", label: "🔢 Verse Number 🔢", value: correctAnswer.verseNumber },
+                  { key: "book", label: "Book", value: correctAnswer.book },
+                  { key: "speaker", label: "Speaker", value: correctAnswer.speaker },
+                  { key: "randomWord", label: "Key Word", value: correctAnswer.randomWord },
+                  { key: "location", label: "Location", value: correctAnswer.location },
+                  { key: "chapterRange", label: "Chapter Range", value: correctAnswer.chapterRange },
+                  { key: "verseNumber", label: "Verse Number", value: correctAnswer.verseNumber },
                 ].map(({ key, label, value }) => (
                   <div key={key} className="text-center">
                     <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
@@ -552,12 +545,12 @@ export default function GuessTheVerse() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-6">
                     {[
-                      { key: "book", label: "📖 Book 📖", value: guess.verse.book },
-                      { key: "speaker", label: "🗣️ Speaker 🗣️", value: guess.verse.speaker },
-                      { key: "randomWord", label: "🔑 Key Word 🔑", value: guess.verse.randomWord },
-                      { key: "location", label: "📍 Location 📍", value: guess.verse.location },
-                      { key: "chapterRange", label: "📑 Chapter Range 📑", value: guess.verse.chapterRange },
-                      { key: "verseNumber", label: "🔢 Verse Number 🔢", value: guess.verse.verseNumber },
+                      { key: "book", label: "Book", value: guess.verse.book },
+                      { key: "speaker", label: "Speaker", value: guess.verse.speaker },
+                      { key: "randomWord", label: "Key Word", value: guess.verse.randomWord },
+                      { key: "location", label: "Location", value: guess.verse.location },
+                      { key: "chapterRange", label: "Chapter Range", value: guess.verse.chapterRange },
+                      { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },
                     ].map(({ key, label, value }) => (
                       <div key={key} className="text-center">
                         <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
