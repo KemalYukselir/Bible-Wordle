@@ -261,8 +261,8 @@ export default function GuessTheVerse() {
           </div>
         </div>
 
-        <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg px-2 py-1 shadow-lg ring-1 ring-white/10">
-          <span className="text-white font-semibold text-xs">Version: ESV</span>
+        <div className="bg-gray-800/90 backdrop-blur-sm border border-yellow-500 rounded px-1.5 py-0.5 shadow-lg ring-1 ring-white/10">
+          <span className="text-white font-medium text-xs">Version: ESV</span>
         </div>
       </div>
 
