@@ -349,9 +349,9 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-24">
         {/* Logo */}
-        <div className="mb-16 text-center">
+        <div className="mb-12 text-center">
           <h1
             className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-wide mb-3"
             style={{
@@ -379,8 +379,8 @@ export default function GuessTheVerse() {
         </div>
 
         {/* Game Panel */}
-        <div className="w-full max-w-md">
-          <div className="bg-gray-800/80 backdrop-blur-sm border-4 border-yellow-400 rounded-xl p-8 mb-6">
+        <div className="w-full max-w-md mb-8">
+          <div className="bg-gray-800/80 backdrop-blur-sm border-4 border-yellow-500 rounded-xl p-8 mb-6">
             <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
             <p className="text-gray-400 text-center mb-6">Select a verse to make your guess.</p>
 
@@ -470,11 +470,13 @@ export default function GuessTheVerse() {
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Game Over Actions */}
-          {gameOver && hasWon && correctAnswer && (
-            <div className="mt-8 text-center">
-              <h2 className="text-green-400 font-bold text-xl mb-4">
+        {/* Correct Answer Section */}
+        {gameOver && hasWon && correctAnswer && (
+          <div className="w-full max-w-4xl bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 mb-8 border border-green-500/30">
+            <div className="text-center">
+              <h2 className="text-green-400 font-bold text-xl mb-6">
                 🎉 You found it in {guesses.length} {guesses.length === 1 ? "attempt" : "attempts"}!
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
@@ -498,24 +500,27 @@ export default function GuessTheVerse() {
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-yellow-300 font-semibold">
+              <p className="mt-6 text-yellow-300 font-semibold text-lg">
                 ✅ {correctAnswer.reference} — "{correctAnswer.text}"
               </p>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Revealing Status */}
-          {isRevealing && (
-            <div className="text-center mb-8">
-              <p className="text-cyan-400">Revealing results...</p>
+        {/* User Input Status Section */}
+        {isRevealing && (
+          <div className="w-full max-w-md bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 mb-8 border border-cyan-500/30">
+            <div className="text-center">
+              <p className="text-cyan-400 font-medium">Revealing results...</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Results */}
+        {/* Guess Results Section */}
         {guesses.length > 0 && (
-          <div className="w-full max-w-4xl mt-8">
-            <div className="space-y-6">
+          <div className="w-full max-w-4xl bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 border border-gray-600/30">
+            <h3 className="text-white font-bold text-lg mb-6 text-center">Your Guesses</h3>
+            <div className="space-y-8">
               {guesses.map((guess, index) => (
                 <div key={index} className="space-y-3">
                   <div className="text-sm font-medium text-white text-center">
