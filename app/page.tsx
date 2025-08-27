@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { BookOpen, ChevronDown } from "lucide-react"
+import { BookOpen, ChevronDown, Share2, Youtube, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -13,14 +13,13 @@ import {
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import Image from "next/image"
 
 import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 
 const sampleVerses = versesFromJson
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
-  
+
 export default function GuessTheVerse() {
   // Correct answer for the game
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
@@ -53,20 +52,21 @@ export default function GuessTheVerse() {
   const [gameOver, setGameOver] = useState(false)
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
+  const [visibleCategories, setVisibleCategories] = useState<{ [key: string]: boolean }>({})
 
-    // ⬇️ load today's verse from the backend once
+  // Load today's verse from the backend once
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
-        const data = await res.json() as { id?: string } & Record<string, any>
+        const data = (await res.json()) as { id?: string } & Record<string, any>
 
         // prefer matching by id (most reliable)
-        let match = data?.id ? sampleVerses.find(v => v.id === data.id) : undefined
+        let match = data?.id ? sampleVerses.find((v) => v.id === data.id) : undefined
 
         // fallback: try by reference if your backend returns ref but not id
         if (!match && data?.ref) {
-          match = sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+          match = sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
         }
 
         if (match) {
@@ -87,7 +87,7 @@ export default function GuessTheVerse() {
   }, [])
 
   // single daily key for everything
-  const todayKey = new Date().toISOString().slice(0,10)
+  const todayKey = new Date().toISOString().slice(0, 10)
   const stateKey = `versele:state:${todayKey}`
 
   // ✅ NEW: track hydration so we don't save too early (React Strict Mode)
@@ -108,13 +108,13 @@ export default function GuessTheVerse() {
     } catch (e) {
       console.warn("Failed to load saved state", e)
     } finally {
-      setHydrated(true)            // ✅ only now are we allowed to save
+      setHydrated(true) // ✅ only now are we allowed to save
     }
   }, [stateKey])
 
   // Save whenever guesses/gameOver/hasWon change — BUT only after hydration
   useEffect(() => {
-    if (!hydrated) return          // ✅ guard fixes the clobbering in dev
+    if (!hydrated) return // ✅ guard fixes the clobbering in dev
     try {
       const saveData = { guesses, gameOver, hasWon }
       localStorage.setItem(stateKey, JSON.stringify(saveData))
@@ -122,8 +122,6 @@ export default function GuessTheVerse() {
       console.warn("Failed to save state", e)
     }
   }, [hydrated, guesses, gameOver, hasWon, stateKey])
-
-
 
   // Filter verses based on search term
   const filteredVerses = sampleVerses.filter(
@@ -139,7 +137,7 @@ export default function GuessTheVerse() {
   }
 
   const handleSubmit = () => {
-    if (!selectedVerse || gameOver || isRevealing) return
+    if (!selectedVerse || gameOver) return
 
     const newFeedback = {
       book: selectedVerse.book === correctAnswer.book,
@@ -154,50 +152,38 @@ export default function GuessTheVerse() {
       verse: selectedVerse,
       feedback: newFeedback,
       revealedCategories: {
-        book: false,
-        speaker: false,
-        randomWord: false,
-        location: false,
-        chapterRange: false,
-        verseNumber: false,
+        book: true,
+        speaker: true,
+        randomWord: true,
+        location: true,
+        chapterRange: true,
+        verseNumber: true,
       },
     }
 
     const updatedGuesses = [...guesses, newGuess]
     setGuesses(updatedGuesses)
+
     setIsRevealing(true)
+    setVisibleCategories({})
 
-    // Animate the reveal of categories
-    const currentGuessIndex = updatedGuesses.length - 1
-    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"] as const
-
+    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"]
     categories.forEach((category, index) => {
-      setTimeout(
-        () => {
-          setGuesses((prev) =>
-            prev.map((guess, guessIndex) =>
-              guessIndex === currentGuessIndex
-                ? { ...guess, revealedCategories: { ...guess.revealedCategories, [category]: true } }
-                : guess,
-            ),
-          )
-        },
-        (index + 1) * 300,
-      )
+      setTimeout(() => {
+        setVisibleCategories((prev) => ({ ...prev, [category]: true }))
+        if (index === categories.length - 1) {
+          setIsRevealing(false)
+        }
+      }, index * 300) // 300ms delay between each category
     })
 
-    // Check if won and finish revealing
-    setTimeout(
-      () => {
-        const won = Object.values(newFeedback).every(Boolean)
-        if (won) {
-          setHasWon(true)
-          setGameOver(true)
-        }
-        setIsRevealing(false)
-      },
-      categories.length * 300 + 200,
-    )
+    const won = Object.values(newFeedback).every(Boolean)
+    if (won) {
+      setTimeout(() => {
+        setHasWon(true)
+        setGameOver(true)
+      }, categories.length * 300) // Wait for all animations to complete
+    }
 
     // Reset selection for next guess
     setSelectedVerse(null)
@@ -209,6 +195,7 @@ export default function GuessTheVerse() {
     setGameOver(false)
     setHasWon(false)
     setIsRevealing(false)
+    setVisibleCategories({})
     setDropdownOpen(false)
     setSearchTerm("")
     // re-fetch (still same verse same day)
@@ -216,7 +203,9 @@ export default function GuessTheVerse() {
       setLoading(true)
       const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
       const data = await res.json()
-      const match = sampleVerses.find(v => v.id === data.id) || sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+      const match =
+        sampleVerses.find((v) => v.id === data.id) ||
+        sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
       setCorrectAnswer(match || sampleVerses[0])
     } catch {
       setCorrectAnswer(sampleVerses[0])
@@ -225,20 +214,45 @@ export default function GuessTheVerse() {
     }
   }
 
+  const handleShare = () => {
+    const shareText = `🎉 I found today's Bible verse in ${guesses.length} ${guesses.length === 1 ? "attempt" : "attempts"}!\n\n${correctAnswer?.reference} - "${correctAnswer?.text}"\n\nPlay VERSELE at ${window.location.origin}`
+
+    if (navigator.share) {
+      navigator.share({
+        title: "VERSELE - Bible Verse Game",
+        text: shareText,
+        url: window.location.origin,
+      })
+    } else {
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert("Results copied to clipboard!")
+      })
+    }
+  }
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/background.avif"
-          alt="Background"
-          fill
-          priority
-          quality={100}
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/60"></div>
+    <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      <div className="fixed top-4 left-4 z-20 flex gap-3">
+        <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10">
+          <h4 className="text-white font-semibold text-xs mb-2">Color Guide</h4>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded border border-green-600"></div>
+              <span className="text-white text-xs">Correct</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-red-500 rounded border border-red-600"></div>
+              <span className="text-white text-xs">Incorrect</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gray-600 rounded border border-gray-500"></div>
+              <span className="text-white text-xs">Hidden</span>
+            </div>
+          </div>
+          <div className="mt-3 pt-2 border-t border-gray-600">
+            <span className="text-white font-medium text-xs">Version: ESV</span>
+          </div>
+        </div>
       </div>
 
       {/* README Button */}
@@ -248,7 +262,7 @@ export default function GuessTheVerse() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-400 hover:text-white bg-gray-800/50 hover:bg-gray-700/50 rounded-lg px-3 py-2 flex items-center gap-2"
+              className="text-gray-600 hover:text-gray-800 bg-white/70 hover:bg-white/90 rounded-lg px-3 py-2 flex items-center gap-2 shadow-sm"
             >
               <BookOpen className="w-4 h-4" />
               <span className="text-sm font-medium">README</span>
@@ -303,27 +317,27 @@ export default function GuessTheVerse() {
                   <h3 className="text-yellow-400 font-bold text-lg mb-3">📊 Game Categories</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-6">
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">📖 Book</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Book</h4>
                       <p className="text-gray-300 text-xs">Which book of the Bible</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">🗣️ Speaker</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Speaker</h4>
                       <p className="text-gray-300 text-xs">Who said or wrote the verse</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">🔑 Key Word</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Key Word</h4>
                       <p className="text-gray-300 text-xs">Important word from the verse</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">📍 Location</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Location</h4>
                       <p className="text-gray-300 text-xs">Where it was spoken/written</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">📑 Chapter Range</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Chapter Range</h4>
                       <p className="text-gray-300 text-xs">Chapter range in the book</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">🔢 Verse Number</h4>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Verse Number</h4>
                       <p className="text-gray-300 text-xs">The verse number</p>
                     </div>
                   </div>
@@ -349,63 +363,44 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-8">
-        {/* Logo */}
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
         <div className="mb-16 text-center">
-          <h1
-            className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-wide mb-3"
-            style={{
-              background: "linear-gradient(135deg, #FCD34D 0%, #F59E0B 30%, #D97706 70%, #FCD34D 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              textShadow: "0 0 20px rgba(252, 211, 77, 0.4)",
-              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.8))",
-              fontFamily: "Impact, 'Arial Black', sans-serif",
-            }}
-          >
-            VERSELE
-          </h1>
-          <p
-            className="text-xl sm:text-2xl font-bold tracking-wide"
-            style={{
-              color: "#FDE047",
-              textShadow: "0 0 15px rgba(253, 224, 71, 0.6), 0 2px 4px rgba(0,0,0,0.8)",
-              filter: "drop-shadow(0 0 10px rgba(253, 224, 71, 0.4))",
-            }}
-          >
-            Guess the verse Challenge
-          </p>
+          <div className="flex items-center justify-center mb-4">
+            <div className="bg-yellow-500 rounded-lg p-3 mr-3">
+              <BookOpen className="w-8 h-8 text-gray-900" />
+            </div>
+            <h1 className="text-5xl sm:text-6xl font-bold text-white tracking-tight drop-shadow-lg">VERSELE</h1>
+          </div>
+          <p className="text-lg sm:text-xl text-white/90 font-medium drop-shadow">Daily Bible Verse Challenge</p>
         </div>
 
         {/* Game Panel */}
-        <div className="w-full max-w-md">
-          <div className="bg-gray-800/80 backdrop-blur-sm border-2 border-yellow-500/50 rounded-xl p-8 mb-6">
+        <div className="w-full max-w-md mb-12">
+          <div className="bg-gray-800/90 backdrop-blur-sm border-3 border-yellow-500 rounded-xl p-8 mb-6 shadow-lg ring-1 ring-white/10">
             <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
-            <p className="text-gray-400 text-center mb-6">Select a verse to make your guess.</p>
+            <p className="text-gray-300 text-center mb-2">Select a verse to make your guess.</p>
+            <p className="text-yellow-400 text-center text-sm mb-6">1,247 people have guessed today</p>
 
             {/* Custom Dropdown */}
             <div className="relative mb-6">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                disabled={gameOver || isRevealing}
-                className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between"
+                disabled={gameOver}
+                className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between ring-1 ring-white/5"
                 style={{
                   boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
                 }}
               >
-                <div className="flex-1">
-                  {selectedVerse ? (
-                    <div className="flex flex-col items-start">
-                      <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
-                      <span className="text-xs text-gray-500">
-                        {selectedVerse.reference} ({selectedVerse.version})
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-gray-500 text-base">Select a verse...</span>
-                  )}
-                </div>
+                {selectedVerse ? (
+                  <div className="flex flex-col items-start">
+                    <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
+                    <span className="text-xs text-gray-500">
+                      {selectedVerse.reference} ({selectedVerse.version})
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-gray-500 text-base">Select a verse...</span>
+                )}
                 <ChevronDown
                   className={`w-5 h-5 text-cyan-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
                 />
@@ -413,7 +408,7 @@ export default function GuessTheVerse() {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-50 max-h-64 overflow-hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-50 max-h-64 overflow-hidden ring-1 ring-white/10">
                   {/* Search Input */}
                   <div className="p-3 border-b border-gray-700">
                     <input
@@ -454,12 +449,12 @@ export default function GuessTheVerse() {
             <div className="flex justify-center">
               <button
                 onClick={handleSubmit}
-                disabled={!selectedVerse || gameOver || isRevealing}
-                className="w-auto mx-auto py-2 px-6 rounded-lg font-black text-sm tracking-wide transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 shadow-lg border-2"
+                disabled={!selectedVerse || gameOver}
+                className="w-auto mx-auto py-2 px-6 rounded-lg font-black text-sm tracking-wide transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 shadow-lg border-2 ring-1 ring-white/10"
                 style={{
-                  background: "#374151", // Gray background
-                  borderColor: "#FDE047", // Yellow border
-                  color: "#FDE047", // Yellow text
+                  background: "#374151",
+                  borderColor: "#FDE047",
+                  color: "#FDE047",
                   textShadow: "0 1px 2px rgba(0,0,0,0.8)",
                   boxShadow: "0 0 20px rgba(253, 224, 71, 0.3), 0 2px 8px rgba(0,0,0,0.2)",
                   filter: "brightness(1.1) drop-shadow(0 1px 4px rgba(253, 224, 71, 0.2))",
@@ -470,12 +465,14 @@ export default function GuessTheVerse() {
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Game Over Actions */}
-          {gameOver && hasWon && correctAnswer && (
-            <div className="mt-8 text-center">
-              <h2 className="text-green-400 font-bold text-xl mb-4">
-                🎉 You found it in {guesses.length} {guesses.length === 1 ? "attempt" : "attempts"}!
+        {/* Correct Answer Section */}
+        {gameOver && hasWon && correctAnswer && (
+          <div className="w-full max-w-4xl bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 mb-8 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+            <div className="text-center">
+              <h2 className="text-green-400 font-bold text-xl mb-6">
+                🎉 You found it in {guesses.length} {guesses.length === 1 ? "attempt" : "attempts"}! 🎉
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
                 {[
@@ -487,10 +484,10 @@ export default function GuessTheVerse() {
                   { key: "verseNumber", label: "Verse Number", value: correctAnswer.verseNumber },
                 ].map(({ key, label, value }) => (
                   <div key={key} className="text-center">
-                    <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto">
+                    <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
                       {label}
                     </h3>
-                    <div className="p-4 sm:p-5 rounded-lg border-2 bg-green-500 border-green-600 text-white scale-105 transition-all duration-500 min-h-[3.5rem] min-w-[8rem] flex items-center justify-center">
+                    <div className="p-3 sm:p-4 rounded-lg border-2 bg-green-500 border-green-600 text-white scale-95 transition-all duration-500 min-h-[3rem] min-w-[7rem] flex items-center justify-center ring-1 ring-white/20">
                       <div className="font-bold text-sm sm:text-base break-words hyphens-auto text-center leading-tight">
                         {value}
                       </div>
@@ -498,27 +495,31 @@ export default function GuessTheVerse() {
                   </div>
                 ))}
               </div>
-              <p className="mt-4 text-yellow-300 font-semibold">
-                ✅ {correctAnswer.reference} — "{correctAnswer.text}"
+              <p className="mt-6 text-yellow-300 font-semibold text-lg">
+                ✅ {correctAnswer.reference} — "{correctAnswer.text}" ✅
               </p>
-            </div>
-          )}
 
-          {/* Revealing Status */}
-          {isRevealing && (
-            <div className="text-center mb-8">
-              <p className="text-cyan-400">Revealing results...</p>
+              <div className="mt-6">
+                <Button
+                  onClick={handleShare}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-6 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 mx-auto ring-1 ring-white/20"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share Results
+                </Button>
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* Results */}
+        {/* Guess Results Section */}
         {guesses.length > 0 && (
-          <div className="w-full max-w-4xl mt-8">
-            <div className="space-y-6">
+          <div className="w-full max-w-4xl bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 mb-16 shadow-lg ring-1 ring-white/10">
+            <h3 className="text-white font-bold text-lg mb-6 text-center tracking-wide">📝 Your Guesses 📝</h3>
+            <div className="space-y-8">
               {guesses.map((guess, index) => (
                 <div key={index} className="space-y-3">
-                  <div className="text-sm font-medium text-white text-center">
+                  <div className="text-sm font-medium text-white text-center tracking-wide">
                     Guess {index + 1}: "{guess.verse.text}" - {guess.verse.reference}
                   </div>
 
@@ -530,26 +531,31 @@ export default function GuessTheVerse() {
                       { key: "location", label: "Location", value: guess.verse.location },
                       { key: "chapterRange", label: "Chapter Range", value: guess.verse.chapterRange },
                       { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },
-                    ].map(({ key, label, value }) => (
-                      <div key={key} className="text-center">
-                        <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto">
-                          {label}
-                        </h3>
-                        <div
-                          className={`p-3 sm:p-4 rounded-lg border-2 transition-all duration-500 transform min-h-[3rem] flex items-center justify-center ${
-                            guess.revealedCategories[key as keyof typeof guess.revealedCategories]
-                              ? guess.feedback[key as keyof typeof guess.feedback]
-                                ? "bg-green-500 border-green-600 text-white scale-105"
-                                : "bg-red-500 border-red-600 text-white scale-105"
-                              : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
-                          }`}
-                        >
-                          <div className="font-bold text-xs sm:text-sm break-words hyphens-auto text-center leading-tight">
-                            {guess.revealedCategories[key as keyof typeof guess.revealedCategories] ? value : "?"}
+                    ].map(({ key, label, value }) => {
+                      const isLatestGuess = index === guesses.length - 1
+                      const shouldShow = !isLatestGuess || visibleCategories[key] || !isRevealing
+
+                      return (
+                        <div key={key} className="text-center">
+                          <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
+                            {label}
+                          </h3>
+                          <div
+                            className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform min-h-[2.5rem] flex items-center justify-center ring-1 ring-white/10 ${
+                              shouldShow
+                                ? guess.feedback[key as keyof typeof guess.feedback]
+                                  ? "bg-green-500 border-green-600 text-white scale-95 opacity-100"
+                                  : "bg-red-500 border-red-600 text-white scale-95 opacity-100"
+                                : "bg-gray-600 border-gray-500 text-gray-400 scale-95 opacity-50"
+                            }`}
+                          >
+                            <div className="font-bold text-xs sm:text-sm break-words hyphens-auto text-center leading-tight">
+                              {shouldShow ? value : "..."}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
 
                   {index < guesses.length - 1 && <div className="border-gray-600"></div>}
@@ -558,6 +564,40 @@ export default function GuessTheVerse() {
             </div>
           </div>
         )}
+
+        {/* Social Section */}
+        <div className="flex gap-6 w-full max-w-2xl">
+          <div className="flex-1 bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+            <div className="text-center">
+              <h3 className="text-white font-bold text-lg mb-4 tracking-wide">🌐 Follow Us 🌐</h3>
+              <div className="flex justify-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-3 ring-1 ring-white/10"
+                  onClick={() => window.open("https://youtube.com", "_blank")}
+                >
+                  <Youtube className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-blue-600 hover:text-blue-500 hover:bg-blue-600/10 p-3 ring-1 ring-white/10"
+                  onClick={() => window.open("https://linkedin.com", "_blank")}
+                >
+                  <Linkedin className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+            <div className="text-center">
+              <h3 className="text-white font-bold text-lg mb-4 tracking-wide">🎮 Check out other games 🎮</h3>
+              <p className="text-gray-400 text-sm">Coming soon...</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
