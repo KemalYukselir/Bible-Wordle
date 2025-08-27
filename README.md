@@ -49,21 +49,21 @@ Your progress is saved in `localStorage` and resets with a new verse each day.
 ### 🔹 Frontend Setup (Next.js)
 
 1. **Install dependencies**
-   ```bash
+   \`\`\`bash
    npm install
    # or
    yarn install
-   ```
+   \`\`\`
 
 2. **Create `.env.local`**
-   ```env
+   \`\`\`env
    NEXT_PUBLIC_API_BASE=http://127.0.0.1:8000
-   ```
+   \`\`\`
 
 3. **Run the development server**
-   ```bash
+   \`\`\`bash
    npm run dev
-   ```
+   \`\`\`
 
 4. **Open** http://localhost:3000
 
@@ -71,28 +71,28 @@ Your progress is saved in `localStorage` and resets with a new verse each day.
 ### 🔹 Backend Setup (FastAPI)
 
 1. **Navigate to backend**
-   ```bash
+   \`\`\`bash
    cd backend
-   ```
+   \`\`\`
 
 2. **Create a virtual environment**
-   ```bash
+   \`\`\`bash
    python -m venv .venv
    source .venv/bin/activate
-   ```
+   \`\`\`
 
 3. **Install dependencies**
-   ```bash
+   \`\`\`bash
    pip install -r requirements.txt
-   ```
+   \`\`\`
 
 4. **Add Firestore service account credentials**
    - Save `service_account.json` inside `backend/` (gitignored), **or** configure via `.env`.
 
 5. **Run the backend**
-   ```bash
+   \`\`\`bash
    uvicorn main:app --reload --port 8000
-   ```
+   \`\`\`
 
 6. **Test endpoint**
    - http://127.0.0.1:8000/today
@@ -110,12 +110,12 @@ Your progress is saved in `localStorage` and resets with a new verse each day.
 **Frontend (Next.js)**
 - Deployed on Netlify  
 - Environment variable:
-  ```env
-  ```
+  \`\`\`env
+  \`\`\`
 - Both deploy automatically from the **main** branch.
 
 ### 📂 Project Structure
-```bash
+\`\`\`bash
 versele/
 ├── app/                    # Next.js App Router
 │   ├── globals.css
@@ -130,7 +130,7 @@ versele/
     ├── verse_today.py      # Verse of the day logic (Firestore)
     ├── requirements.txt    # Python dependencies
     └── service_account.json (gitignored)
-```
+\`\`\`
 
 ### 📜 Example Verses (from JSON)
 - **Matthew 5:14** — "You are the light of the world"

@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Versele - Bible Verse Guessing Game",
   description: "A Wordle-inspired Bible verse guessing game. Test your knowledge of Scripture!",
-    generator: 'v0.app'
+  generator: "v0.app",
 }
 
 export default function RootLayout({
