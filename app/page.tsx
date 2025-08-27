@@ -19,20 +19,8 @@ import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 
 const sampleVerses = versesFromJson
 
-// const getRandomVerse = () => {
-//   const index = Math.floor(Math.random() * versesFromJson.length)
-//   return versesFromJson[index]
-// }
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://127.0.0.1:8000"
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE
   
-// async function loadVerseOfTheDay() {
-//   const res = await fetch(`${API_BASE}/today`);
-//   const data = await res.json();
-//   console.log("Verse of the day:", data);
-//   // e.g. show hint to the user
-// }
-
 export default function GuessTheVerse() {
   // Correct answer for the game
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
