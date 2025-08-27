@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { BookOpen, ChevronDown } from "lucide-react"
+import { BookOpen, ChevronDown, Share2, Twitter, Facebook, Instagram } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -225,6 +225,22 @@ export default function GuessTheVerse() {
     }
   }
 
+  const handleShare = () => {
+    const shareText = `🎉 I found today's Bible verse in ${guesses.length} ${guesses.length === 1 ? "attempt" : "attempts"}!\n\n${correctAnswer?.reference} - "${correctAnswer?.text}"\n\nPlay VERSELE at ${window.location.origin}`
+
+    if (navigator.share) {
+      navigator.share({
+        title: "VERSELE - Bible Verse Game",
+        text: shareText,
+        url: window.location.origin,
+      })
+    } else {
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert("Results copied to clipboard!")
+      })
+    }
+  }
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Background Image */}
@@ -349,9 +365,9 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-24">
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
         {/* Logo */}
-        <div className="mb-12 text-center">
+        <div className="mb-16 text-center">
           <h1
             className="text-6xl sm:text-7xl lg:text-8xl font-black tracking-wide mb-3"
             style={{
@@ -379,7 +395,7 @@ export default function GuessTheVerse() {
         </div>
 
         {/* Game Panel */}
-        <div className="w-full max-w-md mb-8">
+        <div className="w-full max-w-md mb-12">
           <div className="bg-gray-800/80 backdrop-blur-sm border-4 border-yellow-500 rounded-xl p-8 mb-6">
             <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
             <p className="text-gray-400 text-center mb-6">Select a verse to make your guess.</p>
@@ -474,7 +490,7 @@ export default function GuessTheVerse() {
 
         {/* Correct Answer Section */}
         {gameOver && hasWon && correctAnswer && (
-          <div className="w-full max-w-4xl bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 mb-8 border border-green-500/30">
+          <div className="w-full max-w-4xl bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 mb-8 border-4 border-yellow-500">
             <div className="text-center">
               <h2 className="text-green-400 font-bold text-xl mb-6">
                 🎉 You found it in {guesses.length} {guesses.length === 1 ? "attempt" : "attempts"}!
@@ -503,13 +519,23 @@ export default function GuessTheVerse() {
               <p className="mt-6 text-yellow-300 font-semibold text-lg">
                 ✅ {correctAnswer.reference} — "{correctAnswer.text}"
               </p>
+
+              <div className="mt-6">
+                <Button
+                  onClick={handleShare}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-6 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 mx-auto"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share Results
+                </Button>
+              </div>
             </div>
           </div>
         )}
 
         {/* User Input Status Section */}
         {isRevealing && (
-          <div className="w-full max-w-md bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 mb-8 border border-cyan-500/30">
+          <div className="w-full max-w-md bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 mb-8 border-4 border-yellow-500">
             <div className="text-center">
               <p className="text-cyan-400 font-medium">Revealing results...</p>
             </div>
@@ -518,7 +544,7 @@ export default function GuessTheVerse() {
 
         {/* Guess Results Section */}
         {guesses.length > 0 && (
-          <div className="w-full max-w-4xl bg-gray-800/40 backdrop-blur-sm rounded-xl p-6 border border-gray-600/30">
+          <div className="w-full max-w-4xl bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border-4 border-yellow-500 mb-16">
             <h3 className="text-white font-bold text-lg mb-6 text-center">Your Guesses</h3>
             <div className="space-y-8">
               {guesses.map((guess, index) => (
@@ -563,6 +589,38 @@ export default function GuessTheVerse() {
             </div>
           </div>
         )}
+
+        <div className="w-full max-w-md bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 border-4 border-yellow-500 mt-8">
+          <div className="text-center">
+            <h3 className="text-white font-bold text-lg mb-4">Follow Us</h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 p-3"
+                onClick={() => window.open("https://twitter.com", "_blank")}
+              >
+                <Twitter className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-blue-600 hover:text-blue-500 hover:bg-blue-600/10 p-3"
+                onClick={() => window.open("https://facebook.com", "_blank")}
+              >
+                <Facebook className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-pink-500 hover:text-pink-400 hover:bg-pink-500/10 p-3"
+                onClick={() => window.open("https://instagram.com", "_blank")}
+              >
+                <Instagram className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
