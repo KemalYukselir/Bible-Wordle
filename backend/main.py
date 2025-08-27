@@ -19,4 +19,3 @@ def today():
     """Return today's verse"""
     verse = get_verse()
     return verse
-

@@ -20,7 +20,7 @@ import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 const sampleVerses = versesFromJson
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
-  
+
 export default function GuessTheVerse() {
   // Correct answer for the game
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
@@ -54,19 +54,19 @@ export default function GuessTheVerse() {
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
 
-    // ⬇️ load today's verse from the backend once
+  // ⬇️ load today's verse from the backend once
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
-        const data = await res.json() as { id?: string } & Record<string, any>
+        const data = (await res.json()) as { id?: string } & Record<string, any>
 
         // prefer matching by id (most reliable)
-        let match = data?.id ? sampleVerses.find(v => v.id === data.id) : undefined
+        let match = data?.id ? sampleVerses.find((v) => v.id === data.id) : undefined
 
         // fallback: try by reference if your backend returns ref but not id
         if (!match && data?.ref) {
-          match = sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+          match = sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
         }
 
         if (match) {
@@ -87,7 +87,7 @@ export default function GuessTheVerse() {
   }, [])
 
   // single daily key for everything
-  const todayKey = new Date().toISOString().slice(0,10)
+  const todayKey = new Date().toISOString().slice(0, 10)
   const stateKey = `versele:state:${todayKey}`
 
   // ✅ NEW: track hydration so we don't save too early (React Strict Mode)
@@ -108,13 +108,13 @@ export default function GuessTheVerse() {
     } catch (e) {
       console.warn("Failed to load saved state", e)
     } finally {
-      setHydrated(true)            // ✅ only now are we allowed to save
+      setHydrated(true) // ✅ only now are we allowed to save
     }
   }, [stateKey])
 
   // Save whenever guesses/gameOver/hasWon change — BUT only after hydration
   useEffect(() => {
-    if (!hydrated) return          // ✅ guard fixes the clobbering in dev
+    if (!hydrated) return // ✅ guard fixes the clobbering in dev
     try {
       const saveData = { guesses, gameOver, hasWon }
       localStorage.setItem(stateKey, JSON.stringify(saveData))
@@ -122,8 +122,6 @@ export default function GuessTheVerse() {
       console.warn("Failed to save state", e)
     }
   }, [hydrated, guesses, gameOver, hasWon, stateKey])
-
-
 
   // Filter verses based on search term
   const filteredVerses = sampleVerses.filter(
@@ -216,7 +214,9 @@ export default function GuessTheVerse() {
       setLoading(true)
       const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
       const data = await res.json()
-      const match = sampleVerses.find(v => v.id === data.id) || sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+      const match =
+        sampleVerses.find((v) => v.id === data.id) ||
+        sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
       setCorrectAnswer(match || sampleVerses[0])
     } catch {
       setCorrectAnswer(sampleVerses[0])
@@ -301,7 +301,7 @@ export default function GuessTheVerse() {
 
                 <section>
                   <h3 className="text-yellow-400 font-bold text-lg mb-3">📊 Game Categories</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-6">
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">📖 Book</h4>
                       <p className="text-gray-300 text-xs">Which book of the Bible</p>
@@ -477,7 +477,7 @@ export default function GuessTheVerse() {
               <h2 className="text-green-400 font-bold text-xl mb-4">
                 🎉 You found it in {guesses.length} {guesses.length === 1 ? "attempt" : "attempts"}!
               </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
                 {[
                   { key: "book", label: "Book", value: correctAnswer.book },
                   { key: "speaker", label: "Speaker", value: correctAnswer.speaker },
@@ -487,9 +487,13 @@ export default function GuessTheVerse() {
                   { key: "verseNumber", label: "Verse Number", value: correctAnswer.verseNumber },
                 ].map(({ key, label, value }) => (
                   <div key={key} className="text-center">
-                    <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">{label}</h3>
-                    <div className="p-2 sm:p-3 rounded-lg border-2 bg-green-500 border-green-600 text-white scale-105 transition-all duration-500">
-                      <div className="font-bold text-xs sm:text-sm">{value}</div>
+                    <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto">
+                      {label}
+                    </h3>
+                    <div className="p-4 sm:p-5 rounded-lg border-2 bg-green-500 border-green-600 text-white scale-105 transition-all duration-500 min-h-[3.5rem] min-w-[8rem] flex items-center justify-center">
+                      <div className="font-bold text-sm sm:text-base break-words hyphens-auto text-center leading-tight">
+                        {value}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -499,7 +503,6 @@ export default function GuessTheVerse() {
               </p>
             </div>
           )}
-
 
           {/* Revealing Status */}
           {isRevealing && (
@@ -519,7 +522,7 @@ export default function GuessTheVerse() {
                     Guess {index + 1}: "{guess.verse.text}" - {guess.verse.reference}
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-6">
                     {[
                       { key: "book", label: "Book", value: guess.verse.book },
                       { key: "speaker", label: "Speaker", value: guess.verse.speaker },
@@ -529,9 +532,11 @@ export default function GuessTheVerse() {
                       { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },
                     ].map(({ key, label, value }) => (
                       <div key={key} className="text-center">
-                        <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm">{label}</h3>
+                        <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto">
+                          {label}
+                        </h3>
                         <div
-                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform ${
+                          className={`p-3 sm:p-4 rounded-lg border-2 transition-all duration-500 transform min-h-[3rem] flex items-center justify-center ${
                             guess.revealedCategories[key as keyof typeof guess.revealedCategories]
                               ? guess.feedback[key as keyof typeof guess.feedback]
                                 ? "bg-green-500 border-green-600 text-white scale-105"
@@ -539,7 +544,7 @@ export default function GuessTheVerse() {
                               : "bg-gray-600 border-gray-500 text-gray-400 scale-95"
                           }`}
                         >
-                          <div className="font-bold text-xs sm:text-sm">
+                          <div className="font-bold text-xs sm:text-sm break-words hyphens-auto text-center leading-tight">
                             {guess.revealedCategories[key as keyof typeof guess.revealedCategories] ? value : "?"}
                           </div>
                         </div>
