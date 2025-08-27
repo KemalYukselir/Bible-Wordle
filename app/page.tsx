@@ -20,7 +20,7 @@ import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 const sampleVerses = versesFromJson
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
-  
+
 export default function GuessTheVerse() {
   // Correct answer for the game
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
@@ -54,19 +54,19 @@ export default function GuessTheVerse() {
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
 
-    // ⬇️ load today's verse from the backend once
+  // ⬇️ load today's verse from the backend once
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
-        const data = await res.json() as { id?: string } & Record<string, any>
+        const data = (await res.json()) as { id?: string } & Record<string, any>
 
         // prefer matching by id (most reliable)
-        let match = data?.id ? sampleVerses.find(v => v.id === data.id) : undefined
+        let match = data?.id ? sampleVerses.find((v) => v.id === data.id) : undefined
 
         // fallback: try by reference if your backend returns ref but not id
         if (!match && data?.ref) {
-          match = sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+          match = sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
         }
 
         if (match) {
@@ -87,7 +87,7 @@ export default function GuessTheVerse() {
   }, [])
 
   // single daily key for everything
-  const todayKey = new Date().toISOString().slice(0,10)
+  const todayKey = new Date().toISOString().slice(0, 10)
   const stateKey = `versele:state:${todayKey}`
 
   // ✅ NEW: track hydration so we don't save too early (React Strict Mode)
@@ -108,13 +108,13 @@ export default function GuessTheVerse() {
     } catch (e) {
       console.warn("Failed to load saved state", e)
     } finally {
-      setHydrated(true)            // ✅ only now are we allowed to save
+      setHydrated(true) // ✅ only now are we allowed to save
     }
   }, [stateKey])
 
   // Save whenever guesses/gameOver/hasWon change — BUT only after hydration
   useEffect(() => {
-    if (!hydrated) return          // ✅ guard fixes the clobbering in dev
+    if (!hydrated) return // ✅ guard fixes the clobbering in dev
     try {
       const saveData = { guesses, gameOver, hasWon }
       localStorage.setItem(stateKey, JSON.stringify(saveData))
@@ -122,8 +122,6 @@ export default function GuessTheVerse() {
       console.warn("Failed to save state", e)
     }
   }, [hydrated, guesses, gameOver, hasWon, stateKey])
-
-
 
   // Filter verses based on search term
   const filteredVerses = sampleVerses.filter(
@@ -216,7 +214,9 @@ export default function GuessTheVerse() {
       setLoading(true)
       const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
       const data = await res.json()
-      const match = sampleVerses.find(v => v.id === data.id) || sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+      const match =
+        sampleVerses.find((v) => v.id === data.id) ||
+        sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
       setCorrectAnswer(match || sampleVerses[0])
     } catch {
       setCorrectAnswer(sampleVerses[0])
@@ -380,7 +380,7 @@ export default function GuessTheVerse() {
 
         {/* Game Panel */}
         <div className="w-full max-w-md">
-          <div className="bg-gray-800/80 backdrop-blur-sm border-2 border-yellow-500/50 rounded-xl p-8 mb-6">
+          <div className="bg-gray-800/80 backdrop-blur-sm border-4 border-yellow-400 rounded-xl p-8 mb-6">
             <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
             <p className="text-gray-400 text-center mb-6">Select a verse to make your guess.</p>
 
