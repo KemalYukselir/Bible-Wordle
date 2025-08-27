@@ -241,7 +241,38 @@ export default function GuessTheVerse() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+    <div
+      className="min-h-screen relative"
+      style={{
+        backgroundImage:
+          "url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="absolute inset-0 bg-black/40"></div>
+
+      <div className="absolute top-4 left-4 z-20">
+        <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10">
+          <h4 className="text-white font-semibold text-xs mb-2">Color Guide</h4>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded border border-green-600"></div>
+              <span className="text-white text-xs">Correct</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-red-500 rounded border border-red-600"></div>
+              <span className="text-white text-xs">Incorrect</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gray-600 rounded border border-gray-500"></div>
+              <span className="text-white text-xs">Hidden</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* README Button */}
       <div className="absolute top-4 right-4 z-20">
         <Dialog>
@@ -356,9 +387,9 @@ export default function GuessTheVerse() {
             <div className="bg-yellow-500 rounded-lg p-3 mr-3">
               <BookOpen className="w-8 h-8 text-gray-900" />
             </div>
-            <h1 className="text-5xl sm:text-6xl font-bold text-gray-800 tracking-tight">VERSELE</h1>
+            <h1 className="text-5xl sm:text-6xl font-bold text-white tracking-tight drop-shadow-lg">VERSELE</h1>
           </div>
-          <p className="text-lg sm:text-xl text-gray-600 font-medium">Daily Bible Verse Challenge</p>
+          <p className="text-lg sm:text-xl text-white/90 font-medium drop-shadow">Daily Bible Verse Challenge</p>
         </div>
 
         {/* Game Panel */}
@@ -557,26 +588,35 @@ export default function GuessTheVerse() {
         )}
 
         {/* Social Section */}
-        <div className="w-full max-w-md bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 mt-8 shadow-lg ring-1 ring-white/10">
-          <div className="text-center">
-            <h3 className="text-white font-bold text-lg mb-4 tracking-wide">🌐 Follow Us 🌐</h3>
-            <div className="flex justify-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-3 ring-1 ring-white/10"
-                onClick={() => window.open("https://youtube.com", "_blank")}
-              >
-                <Youtube className="w-5 h-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-blue-600 hover:text-blue-500 hover:bg-blue-600/10 p-3 ring-1 ring-white/10"
-                onClick={() => window.open("https://linkedin.com", "_blank")}
-              >
-                <Linkedin className="w-5 h-5" />
-              </Button>
+        <div className="flex gap-6 w-full max-w-2xl">
+          <div className="flex-1 bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+            <div className="text-center">
+              <h3 className="text-white font-bold text-lg mb-4 tracking-wide">🌐 Follow Us 🌐</h3>
+              <div className="flex justify-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-3 ring-1 ring-white/10"
+                  onClick={() => window.open("https://youtube.com", "_blank")}
+                >
+                  <Youtube className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-blue-600 hover:text-blue-500 hover:bg-blue-600/10 p-3 ring-1 ring-white/10"
+                  onClick={() => window.open("https://linkedin.com", "_blank")}
+                >
+                  <Linkedin className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+            <div className="text-center">
+              <h3 className="text-white font-bold text-lg mb-4 tracking-wide">🎮 Check out other games 🎮</h3>
+              <p className="text-gray-400 text-sm">Coming soon...</p>
             </div>
           </div>
         </div>
