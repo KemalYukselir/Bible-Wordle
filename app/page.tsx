@@ -52,8 +52,9 @@ export default function GuessTheVerse() {
   const [gameOver, setGameOver] = useState(false)
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
+  const [visibleCategories, setVisibleCategories] = useState<{ [key: string]: boolean }>({})
 
-  // ⬇️ load today's verse from the backend once
+  // Load today's verse from the backend once
   useEffect(() => {
     ;(async () => {
       try {
@@ -163,10 +164,25 @@ export default function GuessTheVerse() {
     const updatedGuesses = [...guesses, newGuess]
     setGuesses(updatedGuesses)
 
+    setIsRevealing(true)
+    setVisibleCategories({})
+
+    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"]
+    categories.forEach((category, index) => {
+      setTimeout(() => {
+        setVisibleCategories((prev) => ({ ...prev, [category]: true }))
+        if (index === categories.length - 1) {
+          setIsRevealing(false)
+        }
+      }, index * 300) // 300ms delay between each category
+    })
+
     const won = Object.values(newFeedback).every(Boolean)
     if (won) {
-      setHasWon(true)
-      setGameOver(true)
+      setTimeout(() => {
+        setHasWon(true)
+        setGameOver(true)
+      }, categories.length * 300) // Wait for all animations to complete
     }
 
     // Reset selection for next guess
@@ -179,6 +195,7 @@ export default function GuessTheVerse() {
     setGameOver(false)
     setHasWon(false)
     setIsRevealing(false)
+    setVisibleCategories({})
     setDropdownOpen(false)
     setSearchTerm("")
     // re-fetch (still same verse same day)
@@ -514,24 +531,31 @@ export default function GuessTheVerse() {
                       { key: "location", label: "Location", value: guess.verse.location },
                       { key: "chapterRange", label: "Chapter Range", value: guess.verse.chapterRange },
                       { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },
-                    ].map(({ key, label, value }) => (
-                      <div key={key} className="text-center">
-                        <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
-                          {label}
-                        </h3>
-                        <div
-                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform min-h-[2.5rem] flex items-center justify-center ring-1 ring-white/10 ${
-                            guess.feedback[key as keyof typeof guess.feedback]
-                              ? "bg-green-500 border-green-600 text-white scale-95"
-                              : "bg-red-500 border-red-600 text-white scale-95"
-                          }`}
-                        >
-                          <div className="font-bold text-xs sm:text-sm break-words hyphens-auto text-center leading-tight">
-                            {value}
+                    ].map(({ key, label, value }) => {
+                      const isLatestGuess = index === guesses.length - 1
+                      const shouldShow = !isLatestGuess || visibleCategories[key] || !isRevealing
+
+                      return (
+                        <div key={key} className="text-center">
+                          <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
+                            {label}
+                          </h3>
+                          <div
+                            className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform min-h-[2.5rem] flex items-center justify-center ring-1 ring-white/10 ${
+                              shouldShow
+                                ? guess.feedback[key as keyof typeof guess.feedback]
+                                  ? "bg-green-500 border-green-600 text-white scale-95 opacity-100"
+                                  : "bg-red-500 border-red-600 text-white scale-95 opacity-100"
+                                : "bg-gray-600 border-gray-500 text-gray-400 scale-95 opacity-50"
+                            }`}
+                          >
+                            <div className="font-bold text-xs sm:text-sm break-words hyphens-auto text-center leading-tight">
+                              {shouldShow ? value : "..."}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
 
                   {index < guesses.length - 1 && <div className="border-gray-600"></div>}
