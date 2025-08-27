@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/*"
+  to = "https://versele.org"
+  status = 301
+  force = true
