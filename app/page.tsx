@@ -136,7 +136,7 @@ export default function GuessTheVerse() {
   }
 
   const handleSubmit = () => {
-    if (!selectedVerse || gameOver || isRevealing) return
+    if (!selectedVerse || gameOver) return
 
     const newFeedback = {
       book: selectedVerse.book === correctAnswer.book,
@@ -151,50 +151,23 @@ export default function GuessTheVerse() {
       verse: selectedVerse,
       feedback: newFeedback,
       revealedCategories: {
-        book: false,
-        speaker: false,
-        randomWord: false,
-        location: false,
-        chapterRange: false,
-        verseNumber: false,
+        book: true,
+        speaker: true,
+        randomWord: true,
+        location: true,
+        chapterRange: true,
+        verseNumber: true,
       },
     }
 
     const updatedGuesses = [...guesses, newGuess]
     setGuesses(updatedGuesses)
-    setIsRevealing(true)
 
-    // Animate the reveal of categories
-    const currentGuessIndex = updatedGuesses.length - 1
-    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"] as const
-
-    categories.forEach((category, index) => {
-      setTimeout(
-        () => {
-          setGuesses((prev) =>
-            prev.map((guess, guessIndex) =>
-              guessIndex === currentGuessIndex
-                ? { ...guess, revealedCategories: { ...guess.revealedCategories, [category]: true } }
-                : guess,
-            ),
-          )
-        },
-        (index + 1) * 300,
-      )
-    })
-
-    // Check if won and finish revealing
-    setTimeout(
-      () => {
-        const won = Object.values(newFeedback).every(Boolean)
-        if (won) {
-          setHasWon(true)
-          setGameOver(true)
-        }
-        setIsRevealing(false)
-      },
-      categories.length * 300 + 200,
-    )
+    const won = Object.values(newFeedback).every(Boolean)
+    if (won) {
+      setHasWon(true)
+      setGameOver(true)
+    }
 
     // Reset selection for next guess
     setSelectedVerse(null)
@@ -395,7 +368,7 @@ export default function GuessTheVerse() {
             <div className="relative mb-6">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                disabled={gameOver || isRevealing}
+                disabled={gameOver}
                 className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between ring-1 ring-white/5"
                 style={{
                   boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
@@ -459,7 +432,7 @@ export default function GuessTheVerse() {
             <div className="flex justify-center">
               <button
                 onClick={handleSubmit}
-                disabled={!selectedVerse || gameOver || isRevealing}
+                disabled={!selectedVerse || gameOver}
                 className="w-auto mx-auto py-2 px-6 rounded-lg font-black text-sm tracking-wide transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 shadow-lg border-2 ring-1 ring-white/10"
                 style={{
                   background: "#374151",
@@ -522,15 +495,6 @@ export default function GuessTheVerse() {
           </div>
         )}
 
-        {/* User Input Status Section */}
-        {isRevealing && (
-          <div className="w-full max-w-md bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 mb-8 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
-            <div className="text-center">
-              <p className="text-cyan-400 font-medium tracking-wide">⏳ Revealing results... ⏳</p>
-            </div>
-          </div>
-        )}
-
         {/* Guess Results Section */}
         {guesses.length > 0 && (
           <div className="w-full max-w-4xl bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 mb-16 shadow-lg ring-1 ring-white/10">
@@ -557,15 +521,13 @@ export default function GuessTheVerse() {
                         </h3>
                         <div
                           className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform min-h-[2.5rem] flex items-center justify-center ring-1 ring-white/10 ${
-                            guess.revealedCategories[key as keyof typeof guess.revealedCategories]
-                              ? guess.feedback[key as keyof typeof guess.feedback]
-                                ? "bg-green-500 border-green-600 text-white scale-95"
-                                : "bg-red-500 border-red-600 text-white scale-95"
-                              : "bg-gray-600 border-gray-500 text-gray-400 scale-90"
+                            guess.feedback[key as keyof typeof guess.feedback]
+                              ? "bg-green-500 border-green-600 text-white scale-95"
+                              : "bg-red-500 border-red-600 text-white scale-95"
                           }`}
                         >
                           <div className="font-bold text-xs sm:text-sm break-words hyphens-auto text-center leading-tight">
-                            {guess.revealedCategories[key as keyof typeof guess.revealedCategories] ? value : "?"}
+                            {value}
                           </div>
                         </div>
                       </div>
