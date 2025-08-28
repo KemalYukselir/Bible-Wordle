@@ -405,12 +405,12 @@ export default function GuessTheVerse() {
               {/* Dropdown Menu */}
               {dropdownOpen && (
                 <div
-                  className="fixed bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[99999] max-h-64 overflow-hidden ring-1 ring-white/10"
+                  className="absolute bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[99999] max-h-64 overflow-hidden ring-1 ring-white/10 w-full"
                   style={{
                     zIndex: 99999,
-                    top: dropdownOpen ? document.querySelector("button")?.getBoundingClientRect().bottom + 8 : 0,
-                    left: dropdownOpen ? document.querySelector("button")?.getBoundingClientRect().left : 0,
-                    width: dropdownOpen ? document.querySelector("button")?.getBoundingClientRect().width : "auto",
+                    top: "100%",
+                    left: 0,
+                    marginTop: "8px",
                   }}
                 >
                   {/* Search Input */}
