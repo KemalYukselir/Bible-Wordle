@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useLayoutEffect, useRef, useEffect, useState } from "react"
+import { createPortal } from "react-dom";
 import { BookOpen, ChevronDown, Share2, Youtube, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -19,6 +20,70 @@ import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 const sampleVerses = versesFromJson
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
+
+// Drop down functionalities
+export function VerseDropdown({
+  open,
+  anchorRef,
+  children,
+}: {
+  open: boolean;
+  anchorRef: React.RefObject<HTMLElement>;
+  children: React.ReactNode;
+}) {
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
+
+  // helper to compute position from the anchor
+  const compute = () => {
+    if (!open || !anchorRef.current) return;
+    const r = anchorRef.current.getBoundingClientRect();
+    setPos({ top: r.bottom + 8, left: r.left, width: r.width });
+  };
+
+  useLayoutEffect(() => {
+    compute(); // compute immediately on open
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, anchorRef]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    let ticking = false;
+    const onScrollOrResize = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        compute();
+        ticking = false;
+      });
+    };
+
+    // capture = true to catch scrolls from nested containers
+    window.addEventListener("scroll", onScrollOrResize, true);
+    window.addEventListener("resize", onScrollOrResize);
+
+    return () => {
+      window.removeEventListener("scroll", onScrollOrResize, true);
+      window.removeEventListener("resize", onScrollOrResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, anchorRef]);
+
+  if (!open) return null;
+
+  return createPortal(
+    <div
+      style={{ position: "fixed", top: pos.top, left: pos.left, width: pos.width }}
+      className="z-[9999] bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50
+                 rounded-lg shadow-xl ring-1 ring-white/10 max-h-64 overflow-hidden"
+    >
+      {children}
+    </div>,
+    document.body
+  );
+}
+
+
 
 export default function GuessTheVerse() {
   // Correct answer for the game
@@ -136,6 +201,9 @@ export default function GuessTheVerse() {
     setSearchTerm("")
   }
 
+  // drop down functionality
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   const handleSubmit = () => {
     if (!selectedVerse || gameOver) return
 
@@ -243,10 +311,6 @@ export default function GuessTheVerse() {
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-red-500 rounded border border-red-600"></div>
               <span className="text-white text-xs">Incorrect</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-gray-600 rounded border border-gray-500"></div>
-              <span className="text-white text-xs">Hidden</span>
             </div>
           </div>
           <div className="mt-3 pt-2 border-t border-gray-600">
@@ -383,32 +447,31 @@ export default function GuessTheVerse() {
 
             {/* Custom Dropdown */}
             <div className="relative mb-6">
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                disabled={gameOver}
-                className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between ring-1 ring-white/5"
-                style={{
-                  boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-                }}
-              >
-                {selectedVerse ? (
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
-                    <span className="text-xs text-gray-500">
-                      {selectedVerse.reference} ({selectedVerse.version})
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-gray-500 text-base">Select a verse...</span>
-                )}
-                <ChevronDown
-                  className={`w-5 h-5 text-cyan-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                />
-              </button>
 
               {/* Dropdown Menu */}
-              {dropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-50 max-h-64 overflow-hidden ring-1 ring-white/10">
+              <div className="relative mb-6">
+                <button
+                  ref={triggerRef}                               // 👈 anchor for the portal
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  disabled={gameOver || isRevealing}
+                  className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between ring-1 ring-white/5"
+                  style={{ boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)" }}
+                >
+                  {selectedVerse ? (
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
+                      <span className="text-xs text-gray-500">
+                        {selectedVerse.reference} ({selectedVerse.version})
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 text-base">Select a verse...</span>
+                  )}
+                  <ChevronDown className={`w-5 h-5 text-cyan-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {/* ⬇️ Portalized dropdown (replaces the old inline absolute div) */}
+                <VerseDropdown open={dropdownOpen} anchorRef={triggerRef}>
                   {/* Search Input */}
                   <div className="p-3 border-b border-gray-700">
                     <input
@@ -441,9 +504,10 @@ export default function GuessTheVerse() {
                       <div className="p-4 text-center text-gray-400">No verses found</div>
                     )}
                   </div>
-                </div>
-              )}
-            </div>
+                </VerseDropdown>
+              </div>
+
+
 
             {/* Guess Button */}
             <div className="flex justify-center">
@@ -599,6 +663,7 @@ export default function GuessTheVerse() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   )
 }
