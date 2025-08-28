@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { BookOpen, ChevronDown, Share2, Youtube, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { createPortal } from "react-dom"
 
 import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 
@@ -53,6 +54,25 @@ export default function GuessTheVerse() {
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
   const [visibleCategories, setVisibleCategories] = useState<{ [key: string]: boolean }>({})
+
+  const dropdownButtonRef = useRef<HTMLButtonElement>(null)
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 })
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (dropdownOpen && dropdownButtonRef.current) {
+      const rect = dropdownButtonRef.current.getBoundingClientRect()
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      })
+    }
+  }, [dropdownOpen])
 
   // Load today's verse from the backend once
   useEffect(() => {
@@ -230,6 +250,60 @@ export default function GuessTheVerse() {
     }
   }
 
+  const PortalDropdown = () => {
+    if (!mounted || !dropdownOpen) return null
+
+    return createPortal(
+      <>
+        {/* Backdrop */}
+        <div className="fixed inset-0 z-[9998]" onClick={() => setDropdownOpen(false)} />
+        {/* Dropdown */}
+        <div
+          className="fixed bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[9999] max-h-64 overflow-hidden ring-1 ring-white/10"
+          style={{
+            top: dropdownPosition.top,
+            left: dropdownPosition.left,
+            width: dropdownPosition.width,
+          }}
+        >
+          {/* Search Input */}
+          <div className="p-3 border-b border-gray-700">
+            <input
+              type="text"
+              placeholder="Search verses..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full bg-gray-900/50 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
+            />
+          </div>
+
+          {/* Verse List */}
+          <div className="max-h-48 overflow-y-auto">
+            {filteredVerses.length > 0 ? (
+              filteredVerses.map((verse) => (
+                <button
+                  key={verse.id}
+                  onClick={() => handleVerseSelect(verse)}
+                  className="w-full text-left p-3 hover:bg-gray-700/70 transition-colors border-b border-gray-700/50 last:border-b-0"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
+                    <span className="text-xs text-gray-400">
+                      {verse.reference} ({verse.version})
+                    </span>
+                  </div>
+                </button>
+              ))
+            ) : (
+              <div className="p-4 text-center text-gray-400">No verses found</div>
+            )}
+          </div>
+        </div>
+      </>,
+      document.body,
+    )
+  }
+
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
       <div className="fixed top-4 left-4 z-5 flex gap-3">
@@ -380,6 +454,7 @@ export default function GuessTheVerse() {
             {/* Custom Dropdown */}
             <div className="relative mb-6">
               <button
+                ref={dropdownButtonRef}
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 disabled={gameOver}
                 className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between ring-1 ring-white/5"
@@ -402,51 +477,7 @@ export default function GuessTheVerse() {
                 />
               </button>
 
-              {/* Dropdown Menu */}
-              {dropdownOpen && (
-                <div
-                  className="absolute bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[99999] max-h-64 overflow-hidden ring-1 ring-white/10 w-full"
-                  style={{
-                    zIndex: 99999,
-                    top: "100%",
-                    left: 0,
-                    marginTop: "8px",
-                  }}
-                >
-                  {/* Search Input */}
-                  <div className="p-3 border-b border-gray-700">
-                    <input
-                      type="text"
-                      placeholder="Search verses..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full bg-gray-900/50 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-
-                  {/* Verse List */}
-                  <div className="max-h-48 overflow-y-auto">
-                    {filteredVerses.length > 0 ? (
-                      filteredVerses.map((verse) => (
-                        <button
-                          key={verse.id}
-                          onClick={() => handleVerseSelect(verse)}
-                          className="w-full text-left p-3 hover:bg-gray-700/70 transition-colors border-b border-gray-700/50 last:border-b-0"
-                        >
-                          <div className="flex flex-col">
-                            <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
-                            <span className="text-xs text-gray-400">
-                              {verse.reference} ({verse.version})
-                            </span>
-                          </div>
-                        </button>
-                      ))
-                    ) : (
-                      <div className="p-4 text-center text-gray-400">No verses found</div>
-                    )}
-                  </div>
-                </div>
-              )}
+              <PortalDropdown />
             </div>
 
             {/* Guess Button */}
