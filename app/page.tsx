@@ -232,7 +232,7 @@ export default function GuessTheVerse() {
 
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <div className="fixed top-4 left-4 z-20 flex gap-3">
+      <div className="fixed top-4 left-4 z-5 flex gap-3">
         <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10 sm:p-2 sm:text-xs">
           <h4 className="text-white font-semibold text-xs mb-2 sm:text-[10px] sm:mb-1">Color Guide</h4>
           <div className="space-y-1 sm:space-y-0.5">
@@ -252,7 +252,7 @@ export default function GuessTheVerse() {
       </div>
 
       {/* README Button */}
-      <div className="absolute top-4 right-4 z-20">
+      <div className="absolute top-4 right-4 z-5">
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -359,7 +359,7 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
+      <div className="relative z-1 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
         <div className="mb-16 text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="bg-yellow-500 rounded-lg p-3 mr-3">
