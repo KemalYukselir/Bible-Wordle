@@ -233,24 +233,20 @@ export default function GuessTheVerse() {
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
       <div className="fixed top-4 left-4 z-20 flex gap-3">
-        <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10">
-          <h4 className="text-white font-semibold text-xs mb-2">Color Guide</h4>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-500 rounded border border-green-600"></div>
-              <span className="text-white text-xs">Correct</span>
+        <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10 sm:p-2 sm:text-xs">
+          <h4 className="text-white font-semibold text-xs mb-2 sm:text-[10px] sm:mb-1">Color Guide</h4>
+          <div className="space-y-1 sm:space-y-0.5">
+            <div className="flex items-center gap-2 sm:gap-1">
+              <div className="w-3 h-3 bg-green-500 rounded border border-green-600 sm:w-2 sm:h-2"></div>
+              <span className="text-white text-xs sm:text-[10px]">Correct</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-500 rounded border border-red-600"></div>
-              <span className="text-white text-xs">Incorrect</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-gray-600 rounded border border-gray-500"></div>
-              <span className="text-white text-xs">Hidden</span>
+            <div className="flex items-center gap-2 sm:gap-1">
+              <div className="w-3 h-3 bg-red-500 rounded border border-red-600 sm:w-2 sm:h-2"></div>
+              <span className="text-white text-xs sm:text-[10px]">Incorrect</span>
             </div>
           </div>
-          <div className="mt-3 pt-2 border-t border-gray-600">
-            <span className="text-white font-medium text-xs">Version: ESV</span>
+          <div className="mt-3 pt-2 border-t border-gray-600 sm:mt-2 sm:pt-1">
+            <span className="text-white font-medium text-xs sm:text-[10px]">Version: ESV</span>
           </div>
         </div>
       </div>
@@ -408,7 +404,7 @@ export default function GuessTheVerse() {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-50 max-h-64 overflow-hidden ring-1 ring-white/10">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[9999] max-h-64 overflow-hidden ring-1 ring-white/10">
                   {/* Search Input */}
                   <div className="p-3 border-b border-gray-700">
                     <input
