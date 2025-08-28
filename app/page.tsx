@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useLayoutEffect, useRef, useEffect, useState } from "react"
+import { createPortal } from "react-dom";
 import { BookOpen, ChevronDown, Share2, Youtube, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,13 +14,76 @@ import {
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { createPortal } from "react-dom"
 
 import versesFromJson from "@/data/loaded_verses.json" // ← your JSON file
 
 const sampleVerses = versesFromJson
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE
+
+// Drop down functionalities
+export function VerseDropdown({
+  open,
+  anchorRef,
+  children,
+}: {
+  open: boolean;
+  anchorRef: React.RefObject<HTMLElement>;
+  children: React.ReactNode;
+}) {
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
+
+  // helper to compute position from the anchor
+  const compute = () => {
+    if (!open || !anchorRef.current) return;
+    const r = anchorRef.current.getBoundingClientRect();
+    setPos({ top: r.bottom + 8, left: r.left, width: r.width });
+  };
+
+  useLayoutEffect(() => {
+    compute(); // compute immediately on open
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, anchorRef]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    let ticking = false;
+    const onScrollOrResize = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        compute();
+        ticking = false;
+      });
+    };
+
+    // capture = true to catch scrolls from nested containers
+    window.addEventListener("scroll", onScrollOrResize, true);
+    window.addEventListener("resize", onScrollOrResize);
+
+    return () => {
+      window.removeEventListener("scroll", onScrollOrResize, true);
+      window.removeEventListener("resize", onScrollOrResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, anchorRef]);
+
+  if (!open) return null;
+
+  return createPortal(
+    <div
+      style={{ position: "fixed", top: pos.top, left: pos.left, width: pos.width }}
+      className="z-[9999] bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50
+                 rounded-lg shadow-xl ring-1 ring-white/10 max-h-64 overflow-hidden"
+    >
+      {children}
+    </div>,
+    document.body
+  );
+}
+
+
 
 export default function GuessTheVerse() {
   // Correct answer for the game
@@ -53,40 +117,20 @@ export default function GuessTheVerse() {
   const [gameOver, setGameOver] = useState(false)
   const [hasWon, setHasWon] = useState(false)
   const [isRevealing, setIsRevealing] = useState(false)
-  const [visibleCategories, setVisibleCategories] = useState<{ [key: string]: boolean }>({})
 
-  const dropdownButtonRef = useRef<HTMLButtonElement>(null)
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 })
-  const [mounted, setMounted] = useState(false)
-
+    // ⬇️ load today's verse from the backend once
   useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (dropdownOpen && dropdownButtonRef.current) {
-      const rect = dropdownButtonRef.current.getBoundingClientRect()
-      setDropdownPosition({
-        top: rect.bottom + window.scrollY + 8,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      })
-    }
-  }, [dropdownOpen])
-
-  // Load today's verse from the backend once
-  useEffect(() => {
-    ;(async () => {
+    (async () => {
       try {
         const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
-        const data = (await res.json()) as { id?: string } & Record<string, any>
+        const data = await res.json() as { id?: string } & Record<string, any>
 
         // prefer matching by id (most reliable)
-        let match = data?.id ? sampleVerses.find((v) => v.id === data.id) : undefined
+        let match = data?.id ? sampleVerses.find(v => v.id === data.id) : undefined
 
         // fallback: try by reference if your backend returns ref but not id
         if (!match && data?.ref) {
-          match = sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+          match = sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
         }
 
         if (match) {
@@ -107,7 +151,7 @@ export default function GuessTheVerse() {
   }, [])
 
   // single daily key for everything
-  const todayKey = new Date().toISOString().slice(0, 10)
+  const todayKey = new Date().toISOString().slice(0,10)
   const stateKey = `versele:state:${todayKey}`
 
   // ✅ NEW: track hydration so we don't save too early (React Strict Mode)
@@ -128,13 +172,13 @@ export default function GuessTheVerse() {
     } catch (e) {
       console.warn("Failed to load saved state", e)
     } finally {
-      setHydrated(true) // ✅ only now are we allowed to save
+      setHydrated(true)            // ✅ only now are we allowed to save
     }
   }, [stateKey])
 
   // Save whenever guesses/gameOver/hasWon change — BUT only after hydration
   useEffect(() => {
-    if (!hydrated) return // ✅ guard fixes the clobbering in dev
+    if (!hydrated) return          // ✅ guard fixes the clobbering in dev
     try {
       const saveData = { guesses, gameOver, hasWon }
       localStorage.setItem(stateKey, JSON.stringify(saveData))
@@ -156,8 +200,11 @@ export default function GuessTheVerse() {
     setSearchTerm("")
   }
 
+  // drop down functionality
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   const handleSubmit = () => {
-    if (!selectedVerse || gameOver) return
+    if (!selectedVerse || gameOver || isRevealing) return
 
     const newFeedback = {
       book: selectedVerse.book === correctAnswer.book,
@@ -172,38 +219,50 @@ export default function GuessTheVerse() {
       verse: selectedVerse,
       feedback: newFeedback,
       revealedCategories: {
-        book: true,
-        speaker: true,
-        randomWord: true,
-        location: true,
-        chapterRange: true,
-        verseNumber: true,
+        book: false,
+        speaker: false,
+        randomWord: false,
+        location: false,
+        chapterRange: false,
+        verseNumber: false,
       },
     }
 
     const updatedGuesses = [...guesses, newGuess]
     setGuesses(updatedGuesses)
-
     setIsRevealing(true)
-    setVisibleCategories({})
 
-    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"]
+    // Animate the reveal of categories
+    const currentGuessIndex = updatedGuesses.length - 1
+    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"] as const
+
     categories.forEach((category, index) => {
-      setTimeout(() => {
-        setVisibleCategories((prev) => ({ ...prev, [category]: true }))
-        if (index === categories.length - 1) {
-          setIsRevealing(false)
-        }
-      }, index * 300) // 300ms delay between each category
+      setTimeout(
+        () => {
+          setGuesses((prev) =>
+            prev.map((guess, guessIndex) =>
+              guessIndex === currentGuessIndex
+                ? { ...guess, revealedCategories: { ...guess.revealedCategories, [category]: true } }
+                : guess,
+            ),
+          )
+        },
+        (index + 1) * 300,
+      )
     })
 
-    const won = Object.values(newFeedback).every(Boolean)
-    if (won) {
-      setTimeout(() => {
-        setHasWon(true)
-        setGameOver(true)
-      }, categories.length * 300) // Wait for all animations to complete
-    }
+    // Check if won and finish revealing
+    setTimeout(
+      () => {
+        const won = Object.values(newFeedback).every(Boolean)
+        if (won) {
+          setHasWon(true)
+          setGameOver(true)
+        }
+        setIsRevealing(false)
+      },
+      categories.length * 300 + 200,
+    )
 
     // Reset selection for next guess
     setSelectedVerse(null)
@@ -215,7 +274,6 @@ export default function GuessTheVerse() {
     setGameOver(false)
     setHasWon(false)
     setIsRevealing(false)
-    setVisibleCategories({})
     setDropdownOpen(false)
     setSearchTerm("")
     // re-fetch (still same verse same day)
@@ -223,9 +281,7 @@ export default function GuessTheVerse() {
       setLoading(true)
       const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
       const data = await res.json()
-      const match =
-        sampleVerses.find((v) => v.id === data.id) ||
-        sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+      const match = sampleVerses.find(v => v.id === data.id) || sampleVerses.find(v => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
       setCorrectAnswer(match || sampleVerses[0])
     } catch {
       setCorrectAnswer(sampleVerses[0])
@@ -250,78 +306,29 @@ export default function GuessTheVerse() {
     }
   }
 
-  const PortalDropdown = () => {
-    if (!mounted || !dropdownOpen) return null
-
-    return createPortal(
-      <div
-        className="fixed bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[99999] max-h-64 overflow-hidden ring-1 ring-white/10"
-        style={{
-          top: dropdownPosition.top,
-          left: dropdownPosition.left,
-          width: dropdownPosition.width,
-        }}
-      >
-        {/* Search Input */}
-        <div className="p-3 border-b border-gray-700">
-          <input
-            type="text"
-            placeholder="Search verses..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-900/50 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
-          />
-        </div>
-
-        {/* Verse List */}
-        <div className="max-h-48 overflow-y-auto">
-          {filteredVerses.length > 0 ? (
-            filteredVerses.map((verse) => (
-              <button
-                key={verse.id}
-                onClick={() => handleVerseSelect(verse)}
-                className="w-full text-left p-3 hover:bg-gray-700/70 transition-colors border-b border-gray-700/50 last:border-b-0"
-              >
-                <div className="flex flex-col">
-                  <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
-                  <span className="text-xs text-gray-400">
-                    {verse.reference} ({verse.version})
-                  </span>
-                </div>
-              </button>
-            ))
-          ) : (
-            <div className="p-4 text-center text-gray-400">No verses found</div>
-          )}
-        </div>
-      </div>,
-      document.body,
-    )
-  }
-
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <div className="fixed top-4 left-4 z-5 flex gap-3">
-        <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10 sm:p-2 sm:text-xs">
-          <h4 className="text-white font-semibold text-xs mb-2 sm:text-[10px] sm:mb-1">Color Guide</h4>
-          <div className="space-y-1 sm:space-y-0.5">
-            <div className="flex items-center gap-2 sm:gap-1">
-              <div className="w-3 h-3 bg-green-500 rounded border border-green-600 sm:w-2 sm:h-2"></div>
-              <span className="text-white text-xs sm:text-[10px]">Correct</span>
+      <div className="fixed top-4 left-4 z-20 flex gap-3">
+        <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10">
+          <h4 className="text-white font-semibold text-xs mb-2">Color Guide</h4>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded border border-green-600"></div>
+              <span className="text-white text-xs">Correct</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-1">
-              <div className="w-3 h-3 bg-red-500 rounded border border-red-600 sm:w-2 sm:h-2"></div>
-              <span className="text-white text-xs sm:text-[10px]">Incorrect</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-red-500 rounded border border-red-600"></div>
+              <span className="text-white text-xs">Incorrect</span>
             </div>
           </div>
-          <div className="mt-3 pt-2 border-t border-gray-600 sm:mt-2 sm:pt-1">
-            <span className="text-white font-medium text-xs sm:text-[10px]">Version: ESV</span>
+          <div className="mt-3 pt-2 border-t border-gray-600">
+            <span className="text-white font-medium text-xs">Version: ESV</span>
           </div>
         </div>
       </div>
 
       {/* README Button */}
-      <div className="absolute top-4 right-4 z-5">
+      <div className="absolute top-4 right-4 z-20">
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -428,7 +435,7 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-1 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
         <div className="mb-16 text-center">
           <div className="flex items-center justify-center mb-4">
             <div className="bg-yellow-500 rounded-lg p-3 mr-3">
@@ -448,38 +455,73 @@ export default function GuessTheVerse() {
 
             {/* Custom Dropdown */}
             <div className="relative mb-6">
-              <button
-                ref={dropdownButtonRef}
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                disabled={gameOver}
-                className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between ring-1 ring-white/5"
-                style={{
-                  boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-                }}
-              >
-                {selectedVerse ? (
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
-                    <span className="text-xs text-gray-500">
-                      {selectedVerse.reference} ({selectedVerse.version})
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-gray-500 text-base">Select a verse...</span>
-                )}
-                <ChevronDown
-                  className={`w-5 h-5 text-cyan-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                />
-              </button>
 
-              <PortalDropdown />
-            </div>
+              {/* Dropdown Menu */}
+              <div className="relative mb-6">
+                <button
+                  ref={triggerRef}                               // 👈 anchor for the portal
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  disabled={gameOver || isRevealing}
+                  className="w-full bg-gray-900/90 border-2 border-cyan-400 rounded-lg px-6 py-4 text-left text-gray-400 focus:outline-none focus:border-cyan-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-800/90 focus:bg-gray-800/90 shadow-lg hover:shadow-cyan-400/20 focus:shadow-cyan-400/30 flex items-center justify-between ring-1 ring-white/5"
+                  style={{ boxShadow: "0 0 20px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)" }}
+                >
+                  {selectedVerse ? (
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium text-cyan-300 text-sm">"{selectedVerse.text}"</span>
+                      <span className="text-xs text-gray-500">
+                        {selectedVerse.reference} ({selectedVerse.version})
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-gray-500 text-base">Select a verse...</span>
+                  )}
+                  <ChevronDown className={`w-5 h-5 text-cyan-400 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {/* ⬇️ Portalized dropdown (replaces the old inline absolute div) */}
+                <VerseDropdown open={dropdownOpen} anchorRef={triggerRef}>
+                  {/* Search Input */}
+                  <div className="p-3 border-b border-gray-700">
+                    <input
+                      type="text"
+                      placeholder="Search verses..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full bg-gray-900/50 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
+                    />
+                  </div>
+
+                  {/* Verse List */}
+                  <div className="max-h-64 overflow-y-auto">
+                    {filteredVerses.length > 0 ? (
+                      filteredVerses.map((verse) => (
+                        <button
+                          key={verse.id}
+                          onClick={() => handleVerseSelect(verse)}
+                          className="w-full text-left p-3 hover:bg-gray-700/70 transition-colors border-b border-gray-700/50 last:border-b-0"
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
+                            <span className="text-xs text-gray-400">
+                              {verse.reference} ({verse.version})
+                            </span>
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-gray-400">No verses found</div>
+                    )}
+                  </div>
+                </VerseDropdown>
+              </div>
+
+
 
             {/* Guess Button */}
             <div className="flex justify-center">
               <button
                 onClick={handleSubmit}
-                disabled={!selectedVerse || gameOver}
+                disabled={!selectedVerse || gameOver || isRevealing}
                 className="w-auto mx-auto py-2 px-6 rounded-lg font-black text-sm tracking-wide transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 shadow-lg border-2 ring-1 ring-white/10"
                 style={{
                   background: "#374151",
@@ -542,6 +584,15 @@ export default function GuessTheVerse() {
           </div>
         )}
 
+        {/* User Input Status Section */}
+        {isRevealing && (
+          <div className="w-full max-w-md bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 mb-8 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+            <div className="text-center">
+              <p className="text-cyan-400 font-medium tracking-wide">⏳ Revealing results... ⏳</p>
+            </div>
+          </div>
+        )}
+
         {/* Guess Results Section */}
         {guesses.length > 0 && (
           <div className="w-full max-w-4xl bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 mb-16 shadow-lg ring-1 ring-white/10">
@@ -561,31 +612,26 @@ export default function GuessTheVerse() {
                       { key: "location", label: "Location", value: guess.verse.location },
                       { key: "chapterRange", label: "Chapter Range", value: guess.verse.chapterRange },
                       { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },
-                    ].map(({ key, label, value }) => {
-                      const isLatestGuess = index === guesses.length - 1
-                      const shouldShow = !isLatestGuess || visibleCategories[key] || !isRevealing
-
-                      return (
-                        <div key={key} className="text-center">
-                          <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
-                            {label}
-                          </h3>
-                          <div
-                            className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform min-h-[2.5rem] flex items-center justify-center ring-1 ring-white/10 ${
-                              shouldShow
-                                ? guess.feedback[key as keyof typeof guess.feedback]
-                                  ? "bg-green-500 border-green-600 text-white scale-95 opacity-100"
-                                  : "bg-red-500 border-red-600 text-white scale-95 opacity-100"
-                                : "bg-gray-600 border-gray-500 text-gray-400 scale-95 opacity-50"
-                            }`}
-                          >
-                            <div className="font-bold text-xs sm:text-sm break-words hyphens-auto text-center leading-tight">
-                              {shouldShow ? value : "..."}
-                            </div>
+                    ].map(({ key, label, value }) => (
+                      <div key={key} className="text-center">
+                        <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
+                          {label}
+                        </h3>
+                        <div
+                          className={`p-2 sm:p-3 rounded-lg border-2 transition-all duration-500 transform min-h-[2.5rem] flex items-center justify-center ring-1 ring-white/10 ${
+                            guess.revealedCategories[key as keyof typeof guess.revealedCategories]
+                              ? guess.feedback[key as keyof typeof guess.feedback]
+                                ? "bg-green-500 border-green-600 text-white scale-95"
+                                : "bg-red-500 border-red-600 text-white scale-95"
+                              : "bg-gray-600 border-gray-500 text-gray-400 scale-90"
+                          }`}
+                        >
+                          <div className="font-bold text-xs sm:text-sm break-words hyphens-auto text-center leading-tight">
+                            {guess.revealedCategories[key as keyof typeof guess.revealedCategories] ? value : "?"}
                           </div>
                         </div>
-                      )
-                    })}
+                      </div>
+                    ))}
                   </div>
 
                   {index < guesses.length - 1 && <div className="border-gray-600"></div>}
@@ -627,8 +673,10 @@ export default function GuessTheVerse() {
               <p className="text-gray-400 text-sm">Coming soon...</p>
             </div>
           </div>
+          
         </div>
       </div>
+    </div>
     </div>
   )
 }
