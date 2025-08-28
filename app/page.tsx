@@ -254,52 +254,47 @@ export default function GuessTheVerse() {
     if (!mounted || !dropdownOpen) return null
 
     return createPortal(
-      <>
-        {/* Backdrop */}
-        <div className="fixed inset-0 z-[9998]" onClick={() => setDropdownOpen(false)} />
-        {/* Dropdown */}
-        <div
-          className="fixed bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[9999] max-h-64 overflow-hidden ring-1 ring-white/10"
-          style={{
-            top: dropdownPosition.top,
-            left: dropdownPosition.left,
-            width: dropdownPosition.width,
-          }}
-        >
-          {/* Search Input */}
-          <div className="p-3 border-b border-gray-700">
-            <input
-              type="text"
-              placeholder="Search verses..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-gray-900/50 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
-            />
-          </div>
-
-          {/* Verse List */}
-          <div className="max-h-48 overflow-y-auto">
-            {filteredVerses.length > 0 ? (
-              filteredVerses.map((verse) => (
-                <button
-                  key={verse.id}
-                  onClick={() => handleVerseSelect(verse)}
-                  className="w-full text-left p-3 hover:bg-gray-700/70 transition-colors border-b border-gray-700/50 last:border-b-0"
-                >
-                  <div className="flex flex-col">
-                    <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
-                    <span className="text-xs text-gray-400">
-                      {verse.reference} ({verse.version})
-                    </span>
-                  </div>
-                </button>
-              ))
-            ) : (
-              <div className="p-4 text-center text-gray-400">No verses found</div>
-            )}
-          </div>
+      <div
+        className="fixed bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[99999] max-h-64 overflow-hidden ring-1 ring-white/10"
+        style={{
+          top: dropdownPosition.top,
+          left: dropdownPosition.left,
+          width: dropdownPosition.width,
+        }}
+      >
+        {/* Search Input */}
+        <div className="p-3 border-b border-gray-700">
+          <input
+            type="text"
+            placeholder="Search verses..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-gray-900/50 border border-gray-600 rounded px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
+          />
         </div>
-      </>,
+
+        {/* Verse List */}
+        <div className="max-h-48 overflow-y-auto">
+          {filteredVerses.length > 0 ? (
+            filteredVerses.map((verse) => (
+              <button
+                key={verse.id}
+                onClick={() => handleVerseSelect(verse)}
+                className="w-full text-left p-3 hover:bg-gray-700/70 transition-colors border-b border-gray-700/50 last:border-b-0"
+              >
+                <div className="flex flex-col">
+                  <span className="font-medium text-cyan-300 text-sm">"{verse.text}"</span>
+                  <span className="text-xs text-gray-400">
+                    {verse.reference} ({verse.version})
+                  </span>
+                </div>
+              </button>
+            ))
+          ) : (
+            <div className="p-4 text-center text-gray-400">No verses found</div>
+          )}
+        </div>
+      </div>,
       document.body,
     )
   }
