@@ -404,7 +404,10 @@ export default function GuessTheVerse() {
 
               {/* Dropdown Menu */}
               {dropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[9999] max-h-64 overflow-hidden ring-1 ring-white/10">
+                <div
+                  className="absolute top-full left-0 right-0 mt-2 bg-gray-800/95 backdrop-blur-sm border border-cyan-400/50 rounded-lg shadow-xl z-[99999] max-h-64 overflow-hidden ring-1 ring-white/10"
+                  style={{ zIndex: 99999 }}
+                >
                   {/* Search Input */}
                   <div className="p-3 border-b border-gray-700">
                     <input
