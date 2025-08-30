@@ -86,7 +86,19 @@ export function VerseDropdown({
 }
 
 export default function GuessTheVerse() {
-  // Correct answer for the game
+  useEffect(() => {
+    fetch(`${API_BASE}/`)
+      .then(() => {
+        console.log("Backend pinged on load")
+        setBooting(false) // ✅ hide loading UI when server responds
+      })
+      .catch(() => {
+        console.warn("Backend might still be cold")
+        // keep booting true until it eventually responds
+      })
+  }, [])
+
+  const [booting, setBooting] = useState(true)
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -306,6 +318,18 @@ export default function GuessTheVerse() {
     }
   }
 
+    if (booting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-center">
+          <div className="mx-auto mb-4 w-12 h-12 rounded-full border-4 border-white/30 border-t-white animate-spin" />
+          <h1 className="text-white text-2xl font-bold">Loading…</h1>
+          <p className="text-gray-400 mt-2">Waking up the server</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
       <div className="fixed top-4 left-4 z-20 flex gap-3">
@@ -320,9 +344,6 @@ export default function GuessTheVerse() {
               <div className="w-3 h-3 bg-red-500 rounded border border-red-600"></div>
               <span className="text-white text-xs">Incorrect</span>
             </div>
-          </div>
-          <div className="mt-3 pt-2 border-t border-gray-600">
-            <span className="text-white font-medium text-xs">Version: ESV</span>
           </div>
         </div>
       </div>
@@ -443,7 +464,7 @@ export default function GuessTheVerse() {
             </div>
             <h1 className="text-5xl sm:text-6xl font-bold text-white tracking-tight drop-shadow-lg">VERSELE</h1>
           </div>
-          <p className="text-lg sm:text-xl text-white/90 font-medium drop-shadow">Daily Bible Verse Challenge</p>
+          <p className="text-lg sm:text-xl text-white/90 font-medium drop-shadow">Daily Bible Verse Challenge. ESV Version</p>
         </div>
 
         {/* Game Panel */}
