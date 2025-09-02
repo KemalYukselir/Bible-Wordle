@@ -4,7 +4,7 @@ import os
 import json
 
 # STEP 1: Set your Google credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "backend/service_account.json"
 
 # STEP 2: Connect to Firestore
 db = firestore.Client()
