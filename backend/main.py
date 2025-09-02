@@ -14,8 +14,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Method for waiting on ping on website load.
+@app.get("/")
+def health_check():
+    return {"status": "ok"} 
+
 @app.get("/today")
 def today():
     """Return today's verse"""
     verse = get_verse()
     return verse
+
+
