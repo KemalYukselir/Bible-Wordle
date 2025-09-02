@@ -363,7 +363,7 @@ useEffect(() => {
         <div className="min-h-screen flex items-center justify-center bg-background">
           <div className="text-center max-w-md mx-auto px-6">
             <div className="mx-auto mb-6 w-16 h-16 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
-            <h1 className="text-foreground text-2xl font-bold mb-4">Loading JobSprint</h1>
+            <h1 className="text-foreground text-2xl font-bold mb-4">Loading Versele</h1>
             <div className="bg-card border rounded-lg p-4 mb-4">
               <p className="text-muted-foreground text-sm mb-2">While you wait...</p>
               <p className="text-foreground text-sm font-medium animate-fade-in" key={currentTipIndex}>
