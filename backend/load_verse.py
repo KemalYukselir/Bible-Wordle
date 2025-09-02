@@ -23,7 +23,7 @@ def load_verses():
     return verses
 
 # STEP 4: Save to JSON file
-def save_verses_to_json(verses, filename="loaded_verses.json"):
+def save_verses_to_json(verses, filename="data/loaded_verses.json"):
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(verses, f, ensure_ascii=False, indent=2)
 
