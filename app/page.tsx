@@ -96,8 +96,6 @@ const loadingTips = [
   "🎯 Tip: Each guess brings you closer to learning the full verse"
 ];
 
-
-
 export default function GuessTheVerse() {
 const [currentTipIndex, setCurrentTipIndex] = useState(0);
 const [booting, setBooting] = useState(true)
@@ -136,8 +134,20 @@ useEffect(() => {
   return () => {
     clearInterval(tipInterval);
     clearInterval(retryInterval);
-  };
-}, []);
+    };
+  }, []);
+
+  //   Loading state of the playerbase guess count
+  const [guessCount, setGuessCount] = useState(0)
+  useEffect(() => {
+    const fetchGuessCount = async () => {
+      const res = await fetch(`${API_BASE}/get_guess_count`)
+      const data = await res.json()
+      setGuessCount(data.count)
+    }
+    fetchGuessCount()
+  }, [])
+
 
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
   const [loading, setLoading] = useState(true)
@@ -310,36 +320,17 @@ useEffect(() => {
       setTimeout(() => {
         setHasWon(true)
         setGameOver(true)
+        const setGuessCountDB = async () => {
+          const res = await fetch(`${API_BASE}/set_guess_count`)
+          setGuessCount(prevCount => prevCount + 1)
+        }
+        setGuessCountDB()
+
       }, categories.length * 300) // Wait for all animations to complete
     }
 
     // Reset selection for next guess
     setSelectedVerse(null)
-  }
-
-  const resetGame = async () => {
-    setSelectedVerse(null)
-    setGuesses([])
-    setGameOver(false)
-    setHasWon(false)
-    setIsRevealing(false)
-    setVisibleCategories({})
-    setDropdownOpen(false)
-    setSearchTerm("")
-    // re-fetch (still same verse same day)
-    try {
-      setLoading(true)
-      const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
-      const data = await res.json()
-      const match =
-        sampleVerses.find((v) => v.id === data.id) ||
-        sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
-      setCorrectAnswer(match || sampleVerses[0])
-    } catch {
-      setCorrectAnswer(sampleVerses[0])
-    } finally {
-      setLoading(false)
-    }
   }
 
   const handleShare = () => {
@@ -518,7 +509,7 @@ useEffect(() => {
           <div className="bg-gray-800/90 backdrop-blur-sm border-3 border-yellow-500 rounded-xl p-8 mb-6 shadow-lg ring-1 ring-white/10">
             <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
             <p className="text-gray-300 text-center mb-2">Select a verse to make your guess.</p>
-            <p className="text-yellow-400 text-center text-sm mb-6">1,247 people have guessed today</p>
+            <p className="text-yellow-400 text-center text-sm mb-6">{guessCount} people have guessed today</p>
 
             {/* Custom Dropdown */}
             <div className="relative mb-6">
