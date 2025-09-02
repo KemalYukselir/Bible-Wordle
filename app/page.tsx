@@ -85,18 +85,58 @@ export function VerseDropdown({
   )
 }
 
+const loadingTips = [
+  "📖 Tip: Read the full verse before guessing the missing word",
+  "🙏 Tip: Some verses are easier if you know the book they come from",
+  "🕊️ Tip: Daily practice will help you remember scripture more deeply",
+  "✨ Tip: Think about the context of the verse, not just the words",
+  "🧩 Tip: Start with shorter words to get momentum in your guesses",
+  "🌟 Tip: Verses may repeat themes, like love, faith, or hope",
+  "💡 Tip: Don’t be afraid to try common words from scripture first",
+  "🎯 Tip: Each guess brings you closer to learning the full verse"
+];
+
+
+
 export default function GuessTheVerse() {
-  useEffect(() => {
-    fetch(`${API_BASE}/`)
-      .then(() => {
-        console.log("Backend pinged on load")
-        setBooting(false) // ✅ hide loading UI when server responds
-      })
-      .catch(() => {
-        console.warn("Backend might still be cold")
-        // keep booting true until it eventually responds
-      })
-  }, [])
+const [currentTipIndex, setCurrentTipIndex] = useState(0);
+
+useEffect(() => {
+  // Rotate tips every 3 seconds
+  const tipInterval = setInterval(() => {
+    setCurrentTipIndex((prev) => (prev + 1) % loadingTips.length);
+  }, 3000);
+
+  let retryInterval: NodeJS.Timeout;
+
+  const pingBackend = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/`);
+      if (res.ok) {
+        console.log("✅ Backend is awake");
+        setBooting(false);
+        clearInterval(tipInterval);
+        clearInterval(retryInterval);
+      } else {
+        throw new Error("Backend not ready");
+      }
+    } catch {
+      console.warn("⚠️ Backend might still be cold, retrying in 10s...");
+      // stays on booting screen, try again after 10s
+    }
+  };
+
+  // First attempt immediately
+  pingBackend();
+
+  // Keep retrying every 10s until success
+  retryInterval = setInterval(pingBackend, 10000);
+
+  return () => {
+    clearInterval(tipInterval);
+    clearInterval(retryInterval);
+  };
+}, []);
 
   const [booting, setBooting] = useState(true)
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
