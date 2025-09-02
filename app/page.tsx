@@ -375,7 +375,6 @@ useEffect(() => {
         </div>
       );
     }
-  }
 
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
