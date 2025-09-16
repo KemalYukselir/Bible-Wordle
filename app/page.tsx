@@ -445,12 +445,19 @@ export default function GuessTheVerse() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-4">
         <div className="mb-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <img
-              src="/versele-logo-horizontal.png"
-              alt="Versele Logo"
-              className="w-128 h-64 sm:w-160 sm:h-80 object-contain"
-            />
+          <div className="flex items-center justify-center mb-4 gap-3">
+            <div className="bg-black rounded-lg p-3 shadow-lg">
+              <div className="text-white text-4xl">✝</div>
+            </div>
+            <h1
+              className="text-6xl sm:text-8xl font-bold text-white tracking-wider bg-black/30 px-4 py-2 rounded-lg backdrop-blur-sm"
+              style={{
+                fontFamily: "Impact, Arial Black, sans-serif",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)",
+              }}
+            >
+              VERSELE
+            </h1>
           </div>
           <p className="text-lg sm:text-xl text-white font-medium bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm inline-block shadow-lg">
             Daily Bible Verse Challenge
