@@ -443,34 +443,48 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-8">
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-12">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4 gap-4">
             <div
-              className="text-white text-4xl bg-black/50 rounded-lg px-2 py-1 backdrop-blur-sm"
-              style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
+              className="text-white text-4xl px-2 py-1 rounded-md"
+              style={{
+                textShadow: "4px 4px 8px rgba(0,0,0,1), 2px 2px 4px rgba(0,0,0,0.8), 0 0 16px rgba(0,0,0,0.9)",
+                WebkitTextStroke: "1px rgba(0,0,0,0.5)",
+                backgroundColor: "rgba(0,0,0,0.1)",
+              }}
             >
               ✝
             </div>
             <h1
-              className="text-6xl sm:text-8xl font-bold text-white tracking-wider bg-black/50 px-6 py-3 rounded-lg backdrop-blur-sm"
+              className="text-6xl sm:text-8xl font-bold text-white tracking-wider px-4 py-2 rounded-md"
               style={{
                 fontFamily: "Impact, Arial Black, sans-serif",
-                textShadow: "3px 3px 6px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.8)",
+                textShadow: "4px 4px 8px rgba(0,0,0,1), 2px 2px 4px rgba(0,0,0,0.8), 0 0 16px rgba(0,0,0,0.9)",
+                WebkitTextStroke: "1px rgba(0,0,0,0.5)",
+                backgroundColor: "rgba(0,0,0,0.1)",
               }}
             >
               VERSELE
             </h1>
             <div
-              className="text-white text-4xl bg-black/50 rounded-lg px-2 py-1 backdrop-blur-sm"
-              style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
+              className="text-white text-4xl px-2 py-1 rounded-md"
+              style={{
+                textShadow: "4px 4px 8px rgba(0,0,0,1), 2px 2px 4px rgba(0,0,0,0.8), 0 0 16px rgba(0,0,0,0.9)",
+                WebkitTextStroke: "1px rgba(0,0,0,0.5)",
+                backgroundColor: "rgba(0,0,0,0.1)",
+              }}
             >
               ✝
             </div>
           </div>
           <p
-            className="text-lg sm:text-xl text-white font-medium bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm inline-block"
-            style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.8)" }}
+            className="text-lg sm:text-xl text-white font-medium px-3 py-1 rounded-md inline-block"
+            style={{
+              textShadow: "4px 4px 8px rgba(0,0,0,1), 2px 2px 4px rgba(0,0,0,0.8), 0 0 16px rgba(0,0,0,0.9)",
+              WebkitTextStroke: "0.5px rgba(0,0,0,0.5)",
+              backgroundColor: "rgba(0,0,0,0.1)",
+            }}
           >
             Daily Bible Verse Challenge
           </p>
