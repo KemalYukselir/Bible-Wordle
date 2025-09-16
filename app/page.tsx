@@ -443,12 +443,11 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
-        <div className="mb-16 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-4">
+        <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            {/* Doubled the logo size from w-64 h-32 sm:w-80 sm:h-40 to w-128 h-64 sm:w-160 sm:h-80 */}
             <img
-              src="/versele-logo.png"
+              src="/versele-logo-horizontal.png"
               alt="Versele Logo"
               className="w-128 h-64 sm:w-160 sm:h-80 object-contain"
             />
