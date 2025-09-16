@@ -161,7 +161,7 @@ useEffect(() => {
       feedback: {
         book: boolean
         speaker: boolean
-        randomWord: boolean
+        Theme: boolean
         location: boolean
         chapterRange: boolean
         verseNumber: boolean
@@ -169,7 +169,7 @@ useEffect(() => {
       revealedCategories: {
         book: boolean
         speaker: boolean
-        randomWord: boolean
+        Theme: boolean
         location: boolean
         chapterRange: boolean
         verseNumber: boolean
@@ -273,7 +273,7 @@ useEffect(() => {
     const newFeedback = {
       book: selectedVerse.book === correctAnswer.book,
       speaker: selectedVerse.speaker === correctAnswer.speaker,
-      randomWord: selectedVerse.randomWord === correctAnswer.randomWord,
+      Theme: selectedVerse.Theme === correctAnswer.Theme,
       location: selectedVerse.location === correctAnswer.location,
       chapterRange: selectedVerse.chapterRange === correctAnswer.chapterRange,
       verseNumber: selectedVerse.verseNumber === correctAnswer.verseNumber,
@@ -285,7 +285,7 @@ useEffect(() => {
       revealedCategories: {
         book: true,
         speaker: true,
-        randomWord: true,
+        Theme: true,
         location: true,
         chapterRange: true,
         verseNumber: true,
@@ -305,7 +305,7 @@ useEffect(() => {
     setIsRevealing(true)
     setVisibleCategories({})
 
-    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"]
+    const categories = ["book", "speaker", "Theme", "location", "chapterRange", "verseNumber"]
     categories.forEach((category, index) => {
       setTimeout(() => {
         setVisibleCategories((prev) => ({ ...prev, [category]: true }))
@@ -368,7 +368,16 @@ useEffect(() => {
     }
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+    <div className="min-h-screen relative bg-gradient-to-br from-blue-900 to-indigo-900">
+      <div
+        className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('/beautiful-biblical-scene-with-golden-light-rays-th.jpg')`,
+        }}
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 to-indigo-900/60" />
+
       <div className="fixed top-4 left-4 z-20 flex gap-3">
         <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10">
           <h4 className="text-white font-semibold text-xs mb-2">Color Guide</h4>
@@ -496,12 +505,14 @@ useEffect(() => {
       <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
         <div className="mb-16 text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-yellow-500 rounded-lg p-3 mr-3">
-              <BookOpen className="w-8 h-8 text-gray-900" />
-            </div>
-            <h1 className="text-5xl sm:text-6xl font-bold text-white tracking-tight drop-shadow-lg">VERSELE</h1>
+            {/* Doubled the logo size from w-64 h-32 sm:w-80 sm:h-40 to w-128 h-64 sm:w-160 sm:h-80 */}
+            <img
+              src="/versele-logo-horizontal.png"
+              alt="Versele Logo"
+              className="w-128 h-64 sm:w-160 sm:h-80 object-contain"
+            />
           </div>
-          <p className="text-lg sm:text-xl text-white/90 font-medium drop-shadow">Daily Bible Verse Challenge. ESV Version</p>
+          <p className="text-lg sm:text-xl text-white/90 font-medium drop-shadow">Daily Bible Verse Challenge</p>
         </div>
 
         {/* Game Panel */}
@@ -608,7 +619,7 @@ useEffect(() => {
                 {[
                   { key: "book", label: "Book", value: correctAnswer.book },
                   { key: "speaker", label: "Speaker", value: correctAnswer.speaker },
-                  { key: "randomWord", label: "Key Word", value: correctAnswer.randomWord },
+                  { key: "Theme", label: "Key Word", value: correctAnswer.Theme },
                   { key: "location", label: "Location", value: correctAnswer.location },
                   { key: "chapterRange", label: "Chapter Range", value: correctAnswer.chapterRange },
                   { key: "verseNumber", label: "Verse Number", value: correctAnswer.verseNumber },
@@ -672,7 +683,7 @@ useEffect(() => {
                       {[
                         { key: "book", label: "Book", value: guess.verse.book },
                         { key: "speaker", label: "Speaker", value: guess.verse.speaker },
-                        { key: "randomWord", label: "Key Word", value: guess.verse.randomWord },
+                        { key: "Theme", label: "Key Word", value: guess.verse.Theme },
                         { key: "location", label: "Location", value: guess.verse.location },
                         { key: "chapterRange", label: "Chapter Range", value: guess.verse.chapterRange },
                         { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },

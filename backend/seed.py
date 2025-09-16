@@ -82,8 +82,8 @@ def main():
         raise RuntimeError(f"{data_path.name} must contain an array of rows")
 
     expected_cols = {
-        "text","version","id","speaker","chapterRange","verseNumber",
-        "randomWord","location","book","reference"
+        "text","version","id","speaker","chapterRange","Theme",
+        "location","book","reference"
     }
     missing = expected_cols - set(verses[0].keys() if verses else [])
     if missing:
