@@ -11,33 +11,6 @@
     "reference": "Matthew 5:14"
   },
   {
-<<<<<<< HEAD
-    "text": "Even though I walk through the valley of the shadow of death",
-    "version": "ESV",
-    "id": "10",
-    "speaker": "David",
-    "chapterRange": "21-30",
-    "verseNumber": "4",
-    "randomWord": "valley",
-    "location": "Wilderness",
-    "book": "Psalms",
-    "reference": "Psalm 23:4"
-  },
-  {
-    "text": "In the beginning was the Word, and the Word was with God",
-    "version": "ESV",
-    "id": "11",
-    "speaker": "John",
-    "chapterRange": "1-5",
-    "verseNumber": "1",
-    "randomWord": "Word",
-    "location": "Jerusalem",
-    "book": "John",
-    "reference": "John 1:1"
-  },
-  {
-    "text": "For God so loved the world",
-=======
     "text": "Teacher, which is the great commandment in the Law?”\nAnd he said to him, “You shall love the Lord your God with all your heart and with all your soul and with all your mind.\nThis is the great and first commandment.\nAnd a second is like it: You shall love your neighbor as yourself.\nOn these two commandments depend all the Law and the Prophets.",
     "version": "ESV",
     "id": "10",
@@ -149,7 +122,6 @@
   },
   {
     "text": "In the same way, let your light shine before others, so that they may see your good works and give glory to your Father who is in heaven.",
->>>>>>> v0-production
     "version": "ESV",
     "id": "2",
     "speaker": "Jesus",
@@ -315,32 +287,6 @@
   },
   {
     "version": "ESV",
-<<<<<<< HEAD
-    "text": "Blessed are those who hunger for righteousness",
-    "id": "6",
-    "speaker": "Jesus",
-    "chapterRange": "1-10",
-    "verseNumber": "6",
-    "randomWord": "righteousness",
-    "reference": "Matthew 5:6",
-    "book": "Matthew",
-    "location": "Galilee"
-  },
-  {
-    "text": "The Lord is my strength and my song",
-    "version": "ESV",
-    "id": "7",
-    "speaker": "David",
-    "chapterRange": "1-5",
-    "verseNumber": "14",
-    "randomWord": "strength",
-    "location": "Wilderness",
-    "book": "Psalms",
-    "reference": "Psalm 118:14"
-  },
-  {
-    "text": "For to me, to live is Christ and to die is gain",
-=======
     "id": "7",
     "speaker": "God",
     "chapterRange": "1-5",
@@ -351,30 +297,10 @@
   },
   {
     "text": "That according to the riches of his glory he may grant you to be strengthened with power through his Spirit in your inner being, so that Christ may dwell in your hearts through faith - that you, being rooted and grounded in love, may have strength to comprehend with all the saints what is the breadth and length and height and depth, and to know the love of Christ that surpasses knowledge, that you may be filled with all the fullness of God.",
->>>>>>> v0-production
     "version": "ESV",
     "id": "8",
     "speaker": "Paul",
     "chapterRange": "1-5",
-<<<<<<< HEAD
-    "verseNumber": "21",
-    "randomWord": "Christ",
-    "location": "Prison",
-    "book": "Philippians",
-    "reference": "Philippians 1:21"
-  },
-  {
-    "text": "The fear of the Lord is the beginning of knowledge",
-    "version": "ESV",
-    "id": "9",
-    "speaker": "Solomon",
-    "chapterRange": "1-5",
-    "verseNumber": "7",
-    "randomWord": "knowledge",
-    "location": "Jerusalem",
-    "book": "Proverbs",
-    "reference": "Proverbs 1:7"
-=======
     "Theme": "Understand",
     "location": "Prison in Rome",
     "book": "Ephesians",
@@ -390,6 +316,5 @@
     "location": "Corinth",
     "book": "Romans",
     "reference": "Romans 8:31"
->>>>>>> v0-production
   }
 ]
