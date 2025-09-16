@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="bg-indigo-900">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="EFDt331zQAgwXUcuCaJj0Lo1SqSNz80guE1CktCMPz4" />
       </head>

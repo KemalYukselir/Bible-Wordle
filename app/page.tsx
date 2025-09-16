@@ -85,70 +85,8 @@ export function VerseDropdown({
   )
 }
 
-const loadingTips = [
-  "📖 Tip: Read the full verse before guessing the missing word",
-  "🙏 Tip: Some verses are easier if you know the book they come from",
-  "🕊️ Tip: Daily practice will help you remember scripture more deeply",
-  "✨ Tip: Think about the context of the verse, not just the words",
-  "🧩 Tip: Start with shorter words to get momentum in your guesses",
-  "🌟 Tip: Verses may repeat themes, like love, faith, or hope",
-  "💡 Tip: Don’t be afraid to try common words from scripture first",
-  "🎯 Tip: Each guess brings you closer to learning the full verse"
-];
-
 export default function GuessTheVerse() {
-const [currentTipIndex, setCurrentTipIndex] = useState(0);
-const [booting, setBooting] = useState(true)
-
-useEffect(() => {
-  // Rotate tips every 3 seconds
-  const tipInterval = setInterval(() => {
-    setCurrentTipIndex((prev) => (prev + 1) % loadingTips.length);
-  }, 3000);
-
-  let retryInterval: NodeJS.Timeout;
-
-  const pingBackend = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/`);
-      if (res.ok) {
-        console.log("✅ Backend is awake");
-        setBooting(false);
-        clearInterval(tipInterval);
-        clearInterval(retryInterval);
-      } else {
-        throw new Error("Backend not ready");
-      }
-    } catch {
-      console.warn("⚠️ Backend might still be cold, retrying in 10s...");
-      // stays on booting screen, try again after 10s
-    }
-  };
-
-  // First attempt immediately
-  pingBackend();
-
-  // Keep retrying every 10s until success
-  retryInterval = setInterval(pingBackend, 10000);
-
-  return () => {
-    clearInterval(tipInterval);
-    clearInterval(retryInterval);
-    };
-  }, []);
-
-  //   Loading state of the playerbase guess count
-  const [guessCount, setGuessCount] = useState(0)
-  useEffect(() => {
-    const fetchGuessCount = async () => {
-      const res = await fetch(`${API_BASE}/get_guess_count`)
-      const data = await res.json()
-      setGuessCount(data.count)
-    }
-    fetchGuessCount()
-  }, [])
-
-
+  // Correct answer for the game
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -254,10 +192,8 @@ useEffect(() => {
   // Filter verses based on search term
   const filteredVerses = sampleVerses.filter(
     (verse) =>
-      typeof verse.text === "string" &&
-        verse.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      typeof verse.reference === "string" &&
-        verse.reference.toLowerCase().includes(searchTerm.toLowerCase()),
+      verse.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      verse.reference.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   const handleVerseSelect = (verse: (typeof sampleVerses)[0]) => {
@@ -322,17 +258,36 @@ useEffect(() => {
       setTimeout(() => {
         setHasWon(true)
         setGameOver(true)
-        const setGuessCountDB = async () => {
-          const res = await fetch(`${API_BASE}/set_guess_count`)
-          setGuessCount(prevCount => prevCount + 1)
-        }
-        setGuessCountDB()
-
       }, categories.length * 300) // Wait for all animations to complete
     }
 
     // Reset selection for next guess
     setSelectedVerse(null)
+  }
+
+  const resetGame = async () => {
+    setSelectedVerse(null)
+    setGuesses([])
+    setGameOver(false)
+    setHasWon(false)
+    setIsRevealing(false)
+    setVisibleCategories({})
+    setDropdownOpen(false)
+    setSearchTerm("")
+    // re-fetch (still same verse same day)
+    try {
+      setLoading(true)
+      const res = await fetch(`${API_BASE}/today`, { cache: "no-store" })
+      const data = await res.json()
+      const match =
+        sampleVerses.find((v) => v.id === data.id) ||
+        sampleVerses.find((v) => v.reference?.toLowerCase() === String(data.ref).toLowerCase())
+      setCorrectAnswer(match || sampleVerses[0])
+    } catch {
+      setCorrectAnswer(sampleVerses[0])
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleShare = () => {
@@ -351,33 +306,14 @@ useEffect(() => {
     }
   }
 
-    if (booting) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <div className="text-center max-w-md mx-auto px-6">
-            <div className="mx-auto mb-6 w-16 h-16 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
-            <h1 className="text-foreground text-2xl font-bold mb-4">Loading Versele</h1>
-            <div className="bg-card border rounded-lg p-4 mb-4">
-              <p className="text-muted-foreground text-sm mb-2">While you wait...</p>
-              <p className="text-foreground text-sm font-medium animate-fade-in" key={currentTipIndex}>
-                {loadingTips[currentTipIndex]}
-              </p>
-            </div>
-            <p className="text-muted-foreground text-sm">Waking up the server</p>
-          </div>
-        </div>
-      );
-    }
-
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-blue-900 to-indigo-900">
       <div
-        className="absolute inset-0 opacity-60 bg-contain bg-center bg-no-repeat"
+        className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat bg-fixed"
         style={{
-          backgroundImage: `url('/background-christ.webp')`,
+          backgroundImage: `url('/beautiful-biblical-scene-with-golden-light-rays-th.jpg')`,
         }}
       />
-
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 to-indigo-900/60" />
 
       <div className="fixed top-4 left-4 z-20 flex gap-3">
@@ -392,6 +328,9 @@ useEffect(() => {
               <div className="w-3 h-3 bg-red-500 rounded border border-red-600"></div>
               <span className="text-white text-xs">Incorrect</span>
             </div>
+          </div>
+          <div className="mt-3 pt-2 border-t border-gray-600">
+            <span className="text-white font-medium text-xs">Version: ESV</span>
           </div>
         </div>
       </div>
@@ -514,7 +453,9 @@ useEffect(() => {
               className="w-128 h-64 sm:w-160 sm:h-80 object-contain"
             />
           </div>
-          <p className="text-lg sm:text-xl text-white/90 font-medium drop-shadow">Daily Bible Verse Challenge</p>
+          <p className="text-lg sm:text-xl text-white font-medium bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm inline-block shadow-lg">
+            Daily Bible Verse Challenge
+          </p>
         </div>
 
         {/* Game Panel */}
@@ -522,7 +463,7 @@ useEffect(() => {
           <div className="bg-gray-800/90 backdrop-blur-sm border-3 border-yellow-500 rounded-xl p-8 mb-6 shadow-lg ring-1 ring-white/10">
             <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
             <p className="text-gray-300 text-center mb-2">Select a verse to make your guess.</p>
-            <p className="text-yellow-400 text-center text-sm mb-6">{guessCount} people have guessed today</p>
+            <p className="text-yellow-400 text-center text-sm mb-6">1,247 people have guessed today</p>
 
             {/* Custom Dropdown */}
             <div className="relative mb-6">
@@ -671,8 +612,8 @@ useEffect(() => {
                   <div key={index} className="space-y-3">
                     {isLatestGuess && (
                       <div className="flex justify-center mb-4">
-                        <div className="bg-cyan-500/20 border border-cyan-400 rounded-full px-4 py-2 animate-pulse">
-                          <span className="text-cyan-300 font-semibold text-sm tracking-wide">✨ Current Guess ✨</span>
+                        <div className="bg-cyan-500/40 border border-cyan-400 rounded-full px-4 py-2 animate-pulse">
+                          <span className="text-cyan-900 font-semibold text-sm tracking-wide">✨ Current Guess ✨</span>
                         </div>
                       </div>
                     )}

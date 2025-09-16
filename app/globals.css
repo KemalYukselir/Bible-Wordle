@@ -6,10 +6,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@layer base {
-  html, body, #__next, :root { height: 100%; }
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
