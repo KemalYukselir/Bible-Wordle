@@ -448,9 +448,9 @@ export default function GuessTheVerse() {
         <div className="mb-16 text-center">
           <div className="flex items-center justify-center mb-4">
             <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-09-16%20at%2016.03.29-66itActeGRZmQ6uI2qEEBzA1P4TVNt.png"
+              src="/versele-logo-horizontal.png"
               alt="Versele Logo"
-              className="w-32 h-32 sm:w-40 sm:h-40 object-contain"
+              className="w-64 h-32 sm:w-80 sm:h-40 object-contain"
             />
           </div>
           <p className="text-lg sm:text-xl text-white font-medium bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm inline-block shadow-lg">
