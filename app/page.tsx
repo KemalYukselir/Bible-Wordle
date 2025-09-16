@@ -372,9 +372,9 @@ useEffect(() => {
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-blue-900 to-indigo-900">
       <div
-        className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 opacity-60 bg-contain bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('/beautiful-biblical-scene-with-golden-light-rays-th.jpg')`,
+          backgroundImage: `url('/background-christ.webp')`,
         }}
       />
 
