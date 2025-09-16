@@ -99,7 +99,7 @@ export default function GuessTheVerse() {
       feedback: {
         book: boolean
         speaker: boolean
-        randomWord: boolean
+        Theme: boolean
         location: boolean
         chapterRange: boolean
         verseNumber: boolean
@@ -107,7 +107,7 @@ export default function GuessTheVerse() {
       revealedCategories: {
         book: boolean
         speaker: boolean
-        randomWord: boolean
+        Theme: boolean
         location: boolean
         chapterRange: boolean
         verseNumber: boolean
@@ -211,7 +211,7 @@ export default function GuessTheVerse() {
     const newFeedback = {
       book: selectedVerse.book === correctAnswer.book,
       speaker: selectedVerse.speaker === correctAnswer.speaker,
-      randomWord: selectedVerse.randomWord === correctAnswer.randomWord,
+      Theme: selectedVerse.Theme === correctAnswer.Theme,
       location: selectedVerse.location === correctAnswer.location,
       chapterRange: selectedVerse.chapterRange === correctAnswer.chapterRange,
       verseNumber: selectedVerse.verseNumber === correctAnswer.verseNumber,
@@ -223,7 +223,7 @@ export default function GuessTheVerse() {
       revealedCategories: {
         book: true,
         speaker: true,
-        randomWord: true,
+        Theme: true,
         location: true,
         chapterRange: true,
         verseNumber: true,
@@ -243,7 +243,7 @@ export default function GuessTheVerse() {
     setIsRevealing(true)
     setVisibleCategories({})
 
-    const categories = ["book", "speaker", "randomWord", "location", "chapterRange", "verseNumber"]
+    const categories = ["book", "speaker", "Theme", "location", "chapterRange", "verseNumber"]
     categories.forEach((category, index) => {
       setTimeout(() => {
         setVisibleCategories((prev) => ({ ...prev, [category]: true }))
@@ -550,7 +550,7 @@ export default function GuessTheVerse() {
                 {[
                   { key: "book", label: "Book", value: correctAnswer.book },
                   { key: "speaker", label: "Speaker", value: correctAnswer.speaker },
-                  { key: "randomWord", label: "Key Word", value: correctAnswer.randomWord },
+                  { key: "Theme", label: "Key Word", value: correctAnswer.Theme },
                   { key: "location", label: "Location", value: correctAnswer.location },
                   { key: "chapterRange", label: "Chapter Range", value: correctAnswer.chapterRange },
                   { key: "verseNumber", label: "Verse Number", value: correctAnswer.verseNumber },
@@ -614,7 +614,7 @@ export default function GuessTheVerse() {
                       {[
                         { key: "book", label: "Book", value: guess.verse.book },
                         { key: "speaker", label: "Speaker", value: guess.verse.speaker },
-                        { key: "randomWord", label: "Key Word", value: guess.verse.randomWord },
+                        { key: "Theme", label: "Key Word", value: guess.verse.Theme },
                         { key: "location", label: "Location", value: guess.verse.location },
                         { key: "chapterRange", label: "Chapter Range", value: guess.verse.chapterRange },
                         { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },
