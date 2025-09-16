@@ -448,10 +448,10 @@ export default function GuessTheVerse() {
 
         {/* Game Panel */}
         <div className="w-full max-w-xl mb-12">
-          <div className="bg-gray-800/90 backdrop-blur-sm border-3 border-yellow-500 rounded-xl p-8 mb-6 shadow-lg ring-1 ring-white/10">
-            <h2 className="text-white text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
-            <p className="text-gray-300 text-center mb-2">Select a verse to make your guess.</p>
-            <p className="text-yellow-400 text-center text-sm mb-6">1,247 people have guessed today</p>
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-8 mb-6 shadow-2xl ring-1 ring-white/10">
+            <h2 className="text-gray-900 text-xl font-semibold text-center mb-2">Guess today's Bible verse!</h2>
+            <p className="text-gray-800 text-center mb-2">Select a verse to make your guess.</p>
+            <p className="text-purple-800 text-center text-sm mb-6 font-semibold">1,247 people have guessed today</p>
 
             {/* Custom Dropdown */}
             <div className="relative mb-6">
@@ -541,9 +541,9 @@ export default function GuessTheVerse() {
 
         {/* Correct Answer Section */}
         {gameOver && hasWon && correctAnswer && (
-          <div className="w-full max-w-4xl bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 mb-8 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+          <div className="w-full max-w-4xl bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-8 shadow-2xl ring-1 ring-white/10">
             <div className="text-center">
-              <h2 className="text-green-400 font-bold text-xl mb-6">
+              <h2 className="text-green-300 font-bold text-xl mb-6">
                 🎉 You found it in {guesses.length} {guesses.length === 1 ? "attempt" : "attempts"}! 🎉
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
@@ -588,9 +588,9 @@ export default function GuessTheVerse() {
         {guesses.length > 0 && (
           <div
             ref={guessesRef}
-            className="w-full max-w-4xl bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 mb-16 shadow-lg ring-1 ring-white/10"
+            className="w-full max-w-4xl bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 mb-16 shadow-2xl ring-1 ring-white/10"
           >
-            <h3 className="text-white font-bold text-lg mb-6 text-center tracking-wide">📝 Your Guesses 📝</h3>
+            <h3 className="text-gray-900 font-bold text-lg mb-6 text-center tracking-wide">📝 Your Guesses 📝</h3>
             <div className="space-y-8">
               {[...guesses].reverse().map((guess, reverseIndex) => {
                 const index = guesses.length - 1 - reverseIndex
@@ -600,13 +600,13 @@ export default function GuessTheVerse() {
                   <div key={index} className="space-y-3">
                     {isLatestGuess && (
                       <div className="flex justify-center mb-4">
-                        <div className="bg-cyan-500/20 border border-cyan-400 rounded-full px-4 py-2 animate-pulse">
-                          <span className="text-cyan-300 font-semibold text-sm tracking-wide">✨ Current Guess ✨</span>
+                        <div className="bg-cyan-600/30 border border-cyan-700 rounded-full px-4 py-2 animate-pulse">
+                          <span className="text-cyan-900 font-semibold text-sm tracking-wide">✨ Current Guess ✨</span>
                         </div>
                       </div>
                     )}
 
-                    <div className="text-sm font-medium text-white text-center tracking-wide">
+                    <div className="text-sm font-medium text-gray-900 text-center tracking-wide">
                       Guess {index + 1}: "{guess.verse.text}" - {guess.verse.reference}
                     </div>
 
@@ -623,7 +623,7 @@ export default function GuessTheVerse() {
 
                         return (
                           <div key={key} className="text-center">
-                            <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
+                            <h3 className="font-semibold text-gray-900 mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
                               {label}
                             </h3>
                             <div
@@ -654,9 +654,9 @@ export default function GuessTheVerse() {
 
         {/* Social Section */}
         <div className="flex gap-6 w-full max-w-2xl">
-          <div className="flex-1 bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+          <div className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl ring-1 ring-white/10">
             <div className="text-center">
-              <h3 className="text-white font-bold text-lg mb-4 tracking-wide">🌐 Follow Us 🌐</h3>
+              <h3 className="text-gray-900 font-bold text-lg mb-4 tracking-wide">🌐 Follow Us 🌐</h3>
               <div className="flex justify-center gap-4">
                 <Button
                   variant="ghost"
@@ -678,10 +678,10 @@ export default function GuessTheVerse() {
             </div>
           </div>
 
-          <div className="flex-1 bg-gray-800/90 backdrop-blur-sm rounded-xl p-6 border-3 border-yellow-500 shadow-lg ring-1 ring-white/10">
+          <div className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl ring-1 ring-white/10">
             <div className="text-center">
-              <h3 className="text-white font-bold text-lg mb-4 tracking-wide">🎮 Check out other games 🎮</h3>
-              <p className="text-gray-400 text-sm">Coming soon...</p>
+              <h3 className="text-gray-900 font-bold text-lg mb-4 tracking-wide">🎮 Check out other games 🎮</h3>
+              <p className="text-gray-800 text-sm">Coming soon...</p>
             </div>
           </div>
         </div>
