@@ -307,7 +307,7 @@ export default function GuessTheVerse() {
   }
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+    <div className="min-h-screen relative bg-gradient-to-br from-blue-900 to-indigo-900">
       <div
         className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
         style={{
@@ -315,7 +315,7 @@ export default function GuessTheVerse() {
         }}
       />
 
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/60 to-indigo-900/60" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 to-indigo-900/60" />
 
       <div className="fixed top-4 left-4 z-20 flex gap-3">
         <div className="bg-gray-800/90 backdrop-blur-sm border-2 border-yellow-500 rounded-lg p-3 shadow-lg ring-1 ring-white/10">
@@ -446,15 +446,18 @@ export default function GuessTheVerse() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
         <div className="mb-16 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-yellow-500 rounded-lg p-3 mr-3">
-              <BookOpen className="w-8 h-8 text-gray-900" />
-            </div>
-            <h1 className="text-5xl sm:text-6xl font-bold text-white tracking-tight relative z-10 bg-black/30 px-4 py-2 rounded-lg backdrop-blur-sm shadow-lg shadow-black/50">
-              VERSELE
-            </h1>
+          {/* Wordle-style letter tiles for VERSELE */}
+          <div className="flex items-center justify-center mb-4 gap-1">
+            {["V", "E", "R", "S", "E", "L", "E"].map((letter, index) => (
+              <div
+                key={index}
+                className="w-12 h-12 sm:w-16 sm:h-16 bg-green-500 border-2 border-green-600 rounded-lg flex items-center justify-center shadow-lg"
+              >
+                <span className="text-white font-bold text-xl sm:text-2xl tracking-tight">{letter}</span>
+              </div>
+            ))}
           </div>
-          <p className="text-lg sm:text-xl text-white font-medium relative z-10 bg-black/30 px-3 py-1 rounded-lg backdrop-blur-sm inline-block shadow-lg shadow-black/50">
+          <p className="text-lg sm:text-xl text-white font-medium bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm inline-block shadow-lg">
             Daily Bible Verse Challenge
           </p>
         </div>
