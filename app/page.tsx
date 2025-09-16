@@ -443,8 +443,8 @@ export default function GuessTheVerse() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-12">
-        <div className="mb-8 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16">
+        <div className="mb-12 text-center">
           <div className="flex items-center justify-center mb-4 gap-4">
             <div
               className="text-white text-4xl px-2 py-1 rounded-md"
