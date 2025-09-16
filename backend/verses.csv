@@ -1,7 +1,35 @@
-text,version,id,speaker,chapterRange,verseNumber,randomWord,location,book,reference
-You are the light of the world,ESV,1,Jesus,1-10,14,light,Galilee,Matthew,Matthew 5:14
-For God so loved the world,ESV,2,Jesus,1-5,16,loved,Jerusalem,John,John 3:16
-I can do all things through Christ,ESV,3,Paul,1-5,13,things,Prison,Philippians,Philippians 4:13
-The Lord is my shepherd,ESV,4,David,21-30,1,shepherd,Wilderness,Psalms,Psalm 23:1
-Trust in the Lord with all your heart,ESV,5,Solomon,1-5,5,trust,Jerusalem,Proverbs,Proverbs 3:5
-Be strong and courageous,ESV,6,God,1-5,9,courageous,Jordan River,Joshua,Joshua 1:9
+text,version,id,speaker,chapterRange,Theme,location,book,reference
+You are the light of the world,ESV,1,Jesus,1-5,Light,Galilee,Matthew,Matthew 5:14
+"In the same way, let your light shine before others, so that they may see your good works and give glory to your Father who is in heaven.",ESV,2,Jesus,1-5,Light,Galilee,Matthew,Matthew 5:16
+For God so loved the world,ESV,3,Jesus,1-5,Love,Jerusalem,John,John 3:16
+I can do all things through Christ,ESV,4,Paul,1-5,Strength,Prison,Philippians,Philippians 4:13
+The Lord is my shepherd,ESV,5,David,21-25,God's protection,Wilderness,Psalms,Psalm 23:1
+Trust in the Lord with all your heart,ESV,6,Solomon,1-5,Trust,Jerusalem,Proverbs,Proverbs 3:5
+Be strong and courageous,ESV,7,God,1-5,Courage,Jordan River,Joshua,Joshua 1:9
+"That according to the riches of his glory he may grant you to be strengthened with power through his Spirit in your inner being, so that Christ may dwell in your hearts through faith - that you, being rooted and grounded in love, may have strength to comprehend with all the saints what is the breadth and length and height and depth, and to know the love of Christ that surpasses knowledge, that you may be filled with all the fullness of God.",ESV,8,Paul,1-5,Understand,Prison in Rome,Ephesians,Ephesians 3:16-20
+"What then shall we say to these things? If God is for us, who can be against us?",ESV,9,Paul,6-10,God's protection,Corinth,Romans,Romans 8:31
+"Teacher, which is the great commandment in the Law?”
+And he said to him, “You shall love the Lord your God with all your heart and with all your soul and with all your mind.
+This is the great and first commandment.
+And a second is like it: You shall love your neighbor as yourself.
+On these two commandments depend all the Law and the Prophets.",ESV,10,Jesus/Lawyer,21-25,Love,Jerusalem,Matthew,Matthew 22:36-40
+"For I am sure that neither death nor life, nor angels nor rulers, nor things present nor things to come, nor powers,
+nor height nor depth, nor anything else in all creation, will be able to separate us from the love of God in Christ Jesus our Lord",ESV,11,Paul,6-10,Love,Corinth,Romans,Romans 8:38-39
+"But seek first the kingdom of God and his righteousness, and all these things will be added to you.",ESV,12,Jesus,6-10,God's provision,Sermon on the mount,Matthew,Matthew 6:33
+"Blessed are the poor in spirit, for theirs is the kingdom of heaven.",ESV,13,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:3
+"Blessed are those who mourn, for they shall be comforted.",ESV,14,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:4
+"Blessed are the meek, for they shall inherit the earth.",ESV,15,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:5
+"Blessed are those who hunger and thirst for righteousness, for they shall be satisfied.",ESV,16,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:6
+"Blessed are the merciful, for they shall receive mercy.",ESV,17,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:7
+"Blessed are the pure in heart, for they shall see God.",ESV,18,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:8
+"Blessed are the peacemakers, for they shall be called sons of God.",ESV,19,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:9
+"Blessed are those who are perscuted for rightousness' sake, for theirs is the kingdom of heaven.",ESV,20,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:10
+Blessed are you  when others revivle you and persecute you and utter all kinds of evil against you falsely on my account.,ESV,21,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:11
+"Rejoice and be glad, for your reward is great in heaven, for so they persecuted the prophets who were before you.",ESV,22,Jesus,1-5,Blessed,Sermon on the mount,Matthew,Matthew 5:12
+"But when you pray, go into your room and shut the door and pray to your Fther who is in secret. And your Father who sees in secret will reward you.",ESV,23,Jesus,6-10,Pray,Sermon on the mount,Matthew,Matthew 6:6
+"Pray then like this: Our Father in heaven, hallowed by your name. Your Kingdom come, your will be done, on earth as it is in heaven. Give us this day our daily bread, and forgive us our debts, as we also have forgiven our debtors. And lead us not into temptation, but deliver us from evil.",ESV,24,Jesus,6-10,Pray,Sermon on the mount,Matthew,Matthew 6:9-15
+"Look at the birds in the air: they neither sow nor reap nor gather into barns, and yet your heavenly Father feeds them. Are you not of more value than they?",ESV,25,Jesus,6-10,Stress,Sermon on the mount,Matthew,Matthew 6:26
+And which of you by being anxious can add a single hour to his span of life?,ESV,26,Jesus,6-10,Stress,Sermon on the mount,Matthew,Matthew 6:27
+"Judge not, that you be not judged.",ESV,27,Jesus,6-10,Judge,Sermon on the mount,Matthew,Matthew 7:1
+"For with the judgement you pronounce you will be judged, and with the measure you use it will be measured to you.",ESV,28,Jesus,6-10,Judge,Sermon on the mount,Matthew,Matthew 7:2
+"Why do you see the speck that is in your brother's eye, but do not notice the log that is in your own eye?",ESV,29,Jesus,6-10,Judge,Sermon on the mount,Matthew,Matthew 7:3

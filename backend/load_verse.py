@@ -4,7 +4,7 @@ import os
 import json
 
 # STEP 1: Set your Google credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "backend/service_account.json"
 
 # STEP 2: Connect to Firestore
 db = firestore.Client()
@@ -23,7 +23,7 @@ def load_verses():
     return verses
 
 # STEP 4: Save to JSON file
-def save_verses_to_json(verses, filename="loaded_verses.json"):
+def save_verses_to_json(verses, filename="data/loaded_verses.json"):
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(verses, f, ensure_ascii=False, indent=2)
 
