@@ -307,11 +307,11 @@ export default function GuessTheVerse() {
   }
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-blue-900 to-indigo-900">
+    <div className="min-h-screen relative">
       <div
-        className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat bg-fixed"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
         style={{
-          backgroundImage: `url('/beautiful-biblical-scene-with-golden-light-rays-th.jpg')`,
+          backgroundImage: `url('/background.png')`,
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 to-indigo-900/60" />
@@ -448,7 +448,7 @@ export default function GuessTheVerse() {
           <div className="flex items-center justify-center mb-4">
             {/* Doubled the logo size from w-64 h-32 sm:w-80 sm:h-40 to w-128 h-64 sm:w-160 sm:h-80 */}
             <img
-              src="/versele-logo-horizontal.png"
+              src="/versele-logo.png"
               alt="Versele Logo"
               className="w-128 h-64 sm:w-160 sm:h-80 object-contain"
             />
