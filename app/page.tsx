@@ -446,16 +446,12 @@ export default function GuessTheVerse() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-start min-h-screen px-4 py-16 pt-32">
         <div className="mb-16 text-center">
-          {/* Wordle-style letter tiles for VERSELE */}
-          <div className="flex items-center justify-center mb-4 gap-1">
-            {["V", "E", "R", "S", "E", "L", "E"].map((letter, index) => (
-              <div
-                key={index}
-                className="w-12 h-12 sm:w-16 sm:h-16 bg-green-500 border-2 border-green-600 rounded-lg flex items-center justify-center shadow-lg"
-              >
-                <span className="text-white font-bold text-xl sm:text-2xl tracking-tight">{letter}</span>
-              </div>
-            ))}
+          <div className="flex items-center justify-center mb-4">
+            <img
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-09-16%20at%2016.03.29-66itActeGRZmQ6uI2qEEBzA1P4TVNt.png"
+              alt="Versele Logo"
+              className="w-32 h-32 sm:w-40 sm:h-40 object-contain"
+            />
           </div>
           <p className="text-lg sm:text-xl text-white font-medium bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm inline-block shadow-lg">
             Daily Bible Verse Challenge
