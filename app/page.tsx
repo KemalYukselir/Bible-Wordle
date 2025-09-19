@@ -152,7 +152,7 @@ export default function GuessTheVerse() {
         Theme: boolean
         location: boolean
         chapterRange: boolean
-        verseNumber: boolean
+        reference: boolean
       }
       revealedCategories: {
         book: boolean
@@ -160,7 +160,7 @@ export default function GuessTheVerse() {
         Theme: boolean
         location: boolean
         chapterRange: boolean
-        verseNumber: boolean
+        reference: boolean
       }
     }>
   >([])
@@ -264,7 +264,7 @@ export default function GuessTheVerse() {
       Theme: selectedVerse.Theme === correctAnswer.Theme,
       location: selectedVerse.location === correctAnswer.location,
       chapterRange: selectedVerse.chapterRange === correctAnswer.chapterRange,
-      verseNumber: selectedVerse.verseNumber === correctAnswer.verseNumber,
+      reference: selectedVerse.reference === correctAnswer.reference,
     }
 
     const newGuess = {
@@ -276,7 +276,7 @@ export default function GuessTheVerse() {
         Theme: true,
         location: true,
         chapterRange: true,
-        verseNumber: true,
+        reference: true,
       },
     }
 
@@ -293,7 +293,7 @@ export default function GuessTheVerse() {
     setIsRevealing(true)
     setVisibleCategories({})
 
-    const categories = ["book", "speaker", "Theme", "location", "chapterRange", "verseNumber"]
+    const categories = ["book", "speaker", "Theme", "location", "chapterRange", "reference"]
     categories.forEach((category, index) => {
       setTimeout(() => {
         setVisibleCategories((prev) => ({ ...prev, [category]: true }))
@@ -467,7 +467,7 @@ export default function GuessTheVerse() {
 
                 <section>
                   <h3 className="text-yellow-400 font-bold text-lg mb-3">📊 Game Categories</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">Book</h4>
                       <p className="text-gray-300 text-xs">Which book of the Bible</p>
@@ -477,8 +477,8 @@ export default function GuessTheVerse() {
                       <p className="text-gray-300 text-xs">Who said or wrote the verse</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
-                      <h4 className="text-cyan-400 font-semibold mb-1">Key Word</h4>
-                      <p className="text-gray-300 text-xs">Important word from the verse</p>
+                      <h4 className="text-cyan-400 font-semibold mb-1">Theme</h4>
+                      <p className="text-gray-300 text-xs">Important word about the theme of the verse</p>
                     </div>
                     <div className="bg-gray-800/50 rounded-lg p-3">
                       <h4 className="text-cyan-400 font-semibold mb-1">Location</h4>
@@ -666,10 +666,9 @@ export default function GuessTheVerse() {
                 {[
                   { key: "book", label: "Book", value: correctAnswer.book },
                   { key: "speaker", label: "Speaker", value: correctAnswer.speaker },
-                  { key: "Theme", label: "Key Word", value: correctAnswer.Theme },
+                  { key: "theme", label: "Theme", value: correctAnswer.Theme },
                   { key: "location", label: "Location", value: correctAnswer.location },
                   { key: "chapterRange", label: "Chapter Range", value: correctAnswer.chapterRange },
-                  { key: "verseNumber", label: "Verse Number", value: correctAnswer.verseNumber },
                 ].map(({ key, label, value }) => (
                   <div key={key} className="text-center">
                     <h3 className="font-semibold text-white mb-2 text-xs sm:text-sm break-words hyphens-auto tracking-wide">
@@ -726,14 +725,13 @@ export default function GuessTheVerse() {
                       Guess {index + 1}: "{guess.verse.text}" - {guess.verse.reference}
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
                       {[
                         { key: "book", label: "Book", value: guess.verse.book },
                         { key: "speaker", label: "Speaker", value: guess.verse.speaker },
-                        { key: "Theme", label: "Key Word", value: guess.verse.Theme },
+                        { key: "Theme", label: "Theme", value: guess.verse.Theme },
                         { key: "location", label: "Location", value: guess.verse.location },
                         { key: "chapterRange", label: "Chapter Range", value: guess.verse.chapterRange },
-                        { key: "verseNumber", label: "Verse Number", value: guess.verse.verseNumber },
                       ].map(({ key, label, value }) => {
                         const shouldShow = !isLatestGuess || visibleCategories[key] || !isRevealing
 
