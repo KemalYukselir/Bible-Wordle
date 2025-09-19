@@ -85,10 +85,60 @@ export function VerseDropdown({
   )
 }
 
+const loadingTips = [
+  "🙏 Tip: Start with shorter verses when guessing",
+  "📖 Tip: Search by keywords in the verse text",
+  "⛪ Tip: Think about the book's historical context",
+  "🕊️ Tip: Recall the speaker to narrow down options",
+  "🎯 Tip: Focus on unique chapter & verse numbers",
+  "✨ Tip: Pay attention to repeated key words",
+];
+
 export default function GuessTheVerse() {
+  // Server load
+  useEffect(() => {
+    let retryInterval: NodeJS.Timeout;
+    let tipInterval: NodeJS.Timeout;
+
+    // rotate tips every 3s
+    tipInterval = setInterval(() => {
+      setCurrentTipIndex((prev) => (prev + 1) % loadingTips.length);
+    }, 3000);
+
+    const pingBackend = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/today`, { cache: "no-store" });
+        console.log("Pinging backend...", res.status);
+        if (res.ok) {
+          console.log("✅ Backend awake");
+          setBooting(false);
+          clearInterval(retryInterval);
+          clearInterval(tipInterval);
+        } else {
+          throw new Error("Backend not ready");
+        }
+      } catch {
+        console.warn("⚠️ Backend cold, retrying in 10s...");
+      }
+    };
+
+    // first attempt immediately
+    pingBackend();
+    // retry every 10s until success
+    retryInterval = setInterval(pingBackend, 10000);
+
+    return () => {
+      clearInterval(retryInterval);
+      clearInterval(tipInterval);
+    };
+  }, []);
+
   // Correct answer for the game
   const [correctAnswer, setCorrectAnswer] = useState<(typeof sampleVerses)[0] | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const [booting, setBooting] = useState(true);
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
   const [selectedVerse, setSelectedVerse] = useState<(typeof sampleVerses)[0] | null>(null)
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -305,6 +355,28 @@ export default function GuessTheVerse() {
       })
     }
   }
+
+  if (booting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="mx-auto mb-6 w-16 h-16 rounded-full border-4 border-yellow-500/30 border-t-yellow-500 animate-spin" />
+          <h1 className="text-white text-2xl font-bold mb-4">Loading VERSELE</h1>
+          <div className="bg-gray-800 border border-yellow-500/30 rounded-lg p-4 mb-4">
+            <p className="text-gray-400 text-sm mb-2">While you wait...</p>
+            <p
+              className="text-yellow-300 text-sm font-medium animate-fade-in"
+              key={currentTipIndex}
+            >
+              {loadingTips[currentTipIndex]}
+            </p>
+          </div>
+          <p className="text-gray-400 text-sm">Waking up the server</p>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen relative">
